@@ -1797,7 +1797,7 @@ BB13_35:
 	add	iy, bc
 	ld	bc, (iy)
 	ld	hl, (_endDown)
-	ld	de, -6
+	ld	de, -8
 	add	hl, de
 	ld	(ix + -6), bc
 	push	bc
@@ -2133,7 +2133,7 @@ BB13_83:
 	ld	iy, _enemyY
 	add	iy, bc
 	ld	hl, (_endDown)
-	ld	bc, -6
+	ld	bc, -8
 	add	hl, bc
 	ld	de, (ix + -6)
 	or	a, a
@@ -6218,7 +6218,7 @@ BB14_171:
 	section	.rodata,"a",@progbits
 	public	_version
 _version:
-	db	"1.0",000o
+	db	"1.1",000o
 
 	section	.rodata,"a",@progbits
 	public	_testModeAvailable

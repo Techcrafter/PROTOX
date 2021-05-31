@@ -35,7 +35,7 @@ extern unsigned char tilemapM[];
 #define YELLOW			6
 
 //define current version:
-const char version[] = "1.0";
+const char version[] = "1.1";
 
 //variables:
 const int testModeAvailable = 0;
@@ -942,7 +942,7 @@ void enemyHandler()  //handle enemies (movement, drawing, hitboxes, ...)
       }
       else if(enemy[i] == 3)  //enemy 3 handling
       {
-        if(enemyY[i] > endDown - 6)
+        if(enemyY[i] > endDown - 8)
         {
           enemyY[i] -= 3;
           if(enemyScreenCheck())
@@ -1066,7 +1066,7 @@ void enemyHandler()  //handle enemies (movement, drawing, hitboxes, ...)
             gfx_TransparentSprite(enemy5_1, enemyX[i] - scrollX, enemyY[i]);
           }
         }
-        if(enemyY[i] > endDown - 6)
+        if(enemyY[i] > endDown - 8)
         {
           enemyY[i] -= enemy3Speed;
           if(enemyScreenCheck())
