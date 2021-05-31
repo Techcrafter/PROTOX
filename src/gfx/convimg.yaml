@@ -1,0 +1,91 @@
+palettes:
+  - name: global_palette
+    fixed-entries:
+      - color: {index: 0, r: 255, g: 0, b: 220}
+      - color: {index: 1, r: 0, g: 0, b: 0}
+      - color: {index: 2, r: 255, g: 255, b: 255}
+      - color: {index: 3, r: 128, g: 128, b: 128}
+      - color: {index: 4, r: 0, g: 220, b: 30}
+      - color: {index: 5, r: 255, g: 0, b: 0}
+      - color: {index: 6, r: 255, g: 230, b: 0}
+    images: automatic
+
+converts:
+  - name: tileset
+    palette: global_palette
+    tilesets:
+      tile-width: 16
+      tile-height: 16
+      images:
+        - tileset.png
+  
+  - name: sprites
+    palette: global_palette
+    transparent-color-index: 0
+    images:
+      - techcrafter.png
+      - logo.png
+      - playButton0.png
+      - playButton1.png
+      - quitButton0.png
+      - quitButton1.png
+      
+      - playerWalking1.png
+      - playerWalking2.png
+      - playerWalking3.png
+      - playerWalking4.png
+      
+      - shopSelector.png
+      - watermellon.png
+      - meat.png
+      - smallHealPotion.png
+      - bigHealPotion.png
+      - timeStop.png
+      - invincibilityPotion.png
+      - dashBoots.png
+      - swordUpgrade.png
+      
+      - sword1.png
+      - sword2.png
+      
+      - shopGuy1.png
+      - shopGuy2.png
+      
+      - enemy1_1.png
+      - enemy1_2.png
+      - enemy2_1.png
+      - enemy2_2.png
+      
+      - enemy3_1.png
+      - enemy3_2.png
+      - enemy4_1.png
+      - enemy4_2.png
+      
+      - enemy5_1.png
+      - enemy5_2.png
+      
+      - enemy6_1.png
+      - enemy6_2.png
+      
+      - explosion1.png
+      - explosion2.png
+      - explosion3.png
+      - explosion4.png
+
+outputs:
+  - type: c
+    include-file: gfx.h
+    palettes:
+     - global_palette
+    converts:
+      - tileset
+      - sprites
+
+output:
+  - type: c
+    include-file: gfx.h
+    palettes:
+      - global_palette
+    converts:
+      - tileset
+      - sprites

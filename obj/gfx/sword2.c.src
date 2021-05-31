@@ -1,0 +1,9 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.data,"aw",@progbits
+	public	_sword2_data
+_sword2_data:
+	db	"""",012o,000o,000o,000o,000o,000o,000o,000o,000o,"22",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"2",231o,"2222",000o,"2",000o,"2",000o,"2222222222222222",000o,"2222222",273o,"2",325o,"hh2h2h2hhhhhhhhhhhhhhh22",231o,"2",235o,"2",273o,231o,231o,273o,"2",325o,"hhhhhhhhhhhhhhhhhhhhhp222222222",273o,"2",325o,"hhhhhhhhhhhhhhhhhhhhp2",000o,000o,000o,"2",220o,"2",000o,000o,"2",273o,"2hpppppppppppppppppppp2",000o,000o,000o,000o,"2",220o,"2",000o,000o,"2",231o,"2222222222222222222222",000o,000o,000o,000o,000o,"2",220o,"2",000o,000o,000o,"22",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"2",220o,"2",000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,000o,"22"
+	db	30 dup 0
+
+	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"

@@ -1,0 +1,7099 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.text,"ax",@progbits
+	public	_getXBlock
+_getXBlock:
+	call	__frameset0
+	ld	hl, (ix + 6)
+	ld	bc, 320
+	call	__imulu
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_getYBlock
+_getYBlock:
+	call	__frameset0
+	ld	hl, (ix + 6)
+	ld	bc, 240
+	call	__imulu
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_movePlayer
+_movePlayer:
+	ld	hl, -6
+	call	__frameset
+	ld	iy, 1
+	ld	hl, (_playerDirection)
+	ld	de, (_playerX)
+	ld	bc, (_playerWalkSpeed)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	ld	(ix + -6), bc
+	jq	nz, BB2_3
+	push	bc
+	pop	hl
+	add	hl, de
+	ex	de, hl
+	ld	iy, (_endRight)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB2_6
+	ld	(ix + -3), iy
+	ld	(_playerX), iy
+	ld	hl, 1
+	ld	(_playerAnimation), hl
+	ld	(_playerAnimationCount), hl
+	jq	BB2_7
+BB2_3:
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	push	hl
+	pop	de
+	ld	bc, (_endLeft)
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB2_6
+	ld	(ix + -3), bc
+	ld	(_playerX), bc
+	ld	(_playerAnimation), iy
+	ld	(_playerAnimationCount), iy
+	jq	BB2_7
+BB2_6:
+	ld	(_playerX), de
+	ld	(ix + -3), de
+BB2_7:
+	ld	de, (_playerJump)
+	ld	bc, 1
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB2_9
+	or	a, a
+	sbc	hl, hl
+	ld	(_playerGrounded), hl
+	ld	bc, (_playerJumpSpeed)
+	ld	hl, (_playerY)
+	or	a, a
+	sbc	hl, bc
+	ld	(_playerY), hl
+	dec	de
+	ld	(_playerJump), de
+	jq	BB2_12
+BB2_9:
+	ld	hl, (_playerGrounded)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB2_12
+	ld	de, (_playerFallSpeed)
+	ld	hl, (_playerY)
+	add	hl, de
+	ld	(_playerY), hl
+	ld	de, (_endDown)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB2_12
+	ld	(_playerY), de
+	ld	hl, 1
+	ld	(_playerGrounded), hl
+BB2_12:
+	ld	bc, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, bc
+	push	hl
+	pop	de
+	ld	(_cacheX), de
+	ld	(ix + -3), bc
+	push	bc
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB2_17
+	ld	bc, 131
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB2_17
+	ld	hl, (ix + -3)
+	ld	de, (ix + -6)
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	de
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB2_16
+	ld	de, 0
+BB2_16:
+	ld	(_scrollX), de
+	jq	BB2_22
+BB2_17:
+	ld	bc, (_maxScrollX)
+	ld	iy, 190
+	ex	de, hl
+	lea	de, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB2_22
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB2_22
+	ld	hl, (ix + -6)
+	ld	de, (ix + -3)
+	add	hl, de
+	ex	de, hl
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB2_21
+	push	de
+	pop	bc
+BB2_21:
+	ld	(_scrollX), bc
+BB2_22:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawHud
+_drawHud:
+	ld	hl, (_shopActive)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	ld	c, 1
+	ld	b, 0
+	ld	a, c
+	jq	z, BB3_2
+	ld	a, b
+BB3_2:
+	ld	hl, (_universal2Animation)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	z, BB3_4
+	ld	c, b
+BB3_4:
+	ld	hl, _hudTilemap
+	ld	de, 240
+	or	a, c
+	bit	0, a
+	jq	nz, BB3_5
+	ld	bc, 1280
+	jq	BB3_7
+BB3_5:
+	ld	bc, 320
+BB3_7:
+	push	de
+	push	bc
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_lifes)
+	ld	de, 101
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB3_9
+	ld	hl, 4
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, (_lifes)
+	ld	de, -100
+	add	hl, de
+	push	hl
+	pop	bc
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, 6710886
+	ld	e, 63
+	call	__fmul
+	call	__ftol
+	ld	hl, 11
+	push	hl
+	push	bc
+	ld	hl, 213
+	push	hl
+	ld	hl, 67
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 5
+	push	hl
+	call	_gfx_SetColor
+	ld	bc, 90
+	pop	hl
+	jq	BB3_10
+BB3_9:
+	ld	hl, 5
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	bc, (_lifes)
+	push	bc
+	pop	hl
+	push	bc
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	a, l
+	call	__ltof
+	ld	hl, 6710886
+	ld	e, 63
+	call	__fmul
+	call	__ftol
+BB3_10:
+	ld	hl, 11
+	push	hl
+	push	bc
+	ld	hl, 224
+	push	hl
+	ld	hl, 67
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	ld	hl, (_shopActive)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB3_12
+	ld	hl, (_universal2Animation)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB3_13
+BB3_12:
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 220
+	push	hl
+	ld	hl, 180
+	push	hl
+	call	_gfx_SetTextXY
+	pop	hl
+	pop	hl
+	ld	hl, (_score)
+	ld	de, 6
+	push	de
+	push	hl
+	call	_gfx_PrintInt
+	pop	hl
+	pop	hl
+BB3_13:
+	ld	hl, (_testMode)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB3_15
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 10
+	push	hl
+	push	hl
+	ld	hl, L_.str.1
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+BB3_15:
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawPlayer
+_drawPlayer:
+	ld	hl, -3
+	call	__frameset
+	ld	hl, (_playerX)
+	ld	de, (_scrollX)
+	or	a, a
+	sbc	hl, de
+	ld	(ix + -3), hl
+	ld	(_cacheX), hl
+	ld	hl, (_playerY)
+	ld	de, (_scrollY)
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	iy
+	ld	(_cacheY), iy
+	ld	hl, (_playerDirection)
+	ld	bc, (_playerAnimation)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	ld	de, 4
+	jq	nz, BB4_4
+	push	bc
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	push	hl
+	pop	bc
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB4_13
+	ld	de, _playerWalking1_data
+	ld	hl, LJTI4_0
+	add	hl, bc
+	add	hl, bc
+	add	hl, bc
+	ld	hl, (hl)
+	jp	(hl)
+BB4_3:
+	ld	de, _playerWalking2_data
+	jq	BB4_12
+BB4_4:
+	dec	bc
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB4_6
+	ld	de, L_switch.table.drawPlayer
+	push	bc
+	pop	hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ex	de, hl
+	add	hl, bc
+	ld	hl, (hl)
+	ld	hl, (hl)
+	push	iy
+	ld	de, (ix + -3)
+	push	de
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+BB4_6:
+	ld	de, (_sword)
+	ld	bc, 1
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB4_8
+	ld	de, -16
+	ld	bc, (_sword1Flipped)
+	ld	iy, (_cacheX)
+	add	iy, de
+	ld	hl, (_cacheY)
+	ld	de, 12
+	jq	BB4_17
+BB4_8:
+	ld	bc, 2
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB4_19
+	ld	de, -27
+	ld	bc, (_sword2Flipped)
+	ld	iy, (_cacheX)
+	add	iy, de
+	ld	hl, (_cacheY)
+	ld	de, 10
+	jq	BB4_17
+BB4_10:
+	ld	de, _playerWalking3_data
+	jq	BB4_12
+BB4_11:
+	ld	de, _playerWalking4_data
+BB4_12:
+	push	iy
+	ld	hl, (ix + -3)
+	push	hl
+	push	de
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+BB4_13:
+	ld	de, (_sword)
+	ld	bc, 1
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB4_15
+	ld	de, _sword1_data
+	ld	iy, (_cacheX)
+	ld	bc, 10
+	add	iy, bc
+	ld	hl, (_cacheY)
+	ld	bc, 12
+	add	hl, bc
+	push	hl
+	push	iy
+	push	de
+	jq	BB4_18
+BB4_15:
+	ld	bc, 2
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB4_19
+	ld	de, 11
+	ld	bc, _sword2_data
+	ld	iy, (_cacheX)
+	add	iy, de
+	ld	hl, (_cacheY)
+	dec	de
+BB4_17:
+	add	hl, de
+	push	hl
+	push	iy
+	push	bc
+BB4_18:
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+BB4_19:
+	ld	de, (_playerAnimationCount)
+	ld	bc, (_playerAnimationSpeed)
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB4_21
+	inc	de
+	ld	(_playerAnimationCount), de
+	jq	BB4_24
+BB4_21:
+	ld	bc, 1
+	push	bc
+	pop	iy
+	ld	(_playerAnimationCount), iy
+	ld	de, (_playerAnimation)
+	push	de
+	pop	hl
+	ld	bc, 4
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB4_23
+	inc	de
+	ld	(_playerAnimation), de
+	jq	BB4_24
+BB4_23:
+	ld	(_playerAnimation), iy
+BB4_24:
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+	section	.rodata,"a",@progbits
+lJTI4_0:
+	private	LJTI4_0
+LJTI4_0:
+	dl	BB4_12
+	dl	BB4_3
+	dl	BB4_10
+	dl	BB4_11
+
+	section	.text,"ax",@progbits
+	public	_countIn
+_countIn:
+	ld	bc, 320
+	ld	hl, (_firstXBlock)
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	de, (_scrollX)
+	add	iy, de
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 40
+	push	hl
+	ld	hl, 320
+	push	hl
+	ld	hl, 100
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 112
+	push	hl
+	ld	hl, 156
+	push	hl
+	ld	hl, L_.str.2
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	hl, 500
+	push	hl
+	call	_delay
+	pop	hl
+	ld	hl, (_firstXBlock)
+	ld	bc, 320
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	de, (_scrollX)
+	add	iy, de
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 40
+	push	hl
+	ld	hl, 320
+	push	hl
+	ld	hl, 100
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	ld	hl, 112
+	push	hl
+	ld	hl, 156
+	push	hl
+	ld	hl, L_.str.3
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	hl, 500
+	push	hl
+	call	_delay
+	pop	hl
+	ld	hl, (_firstXBlock)
+	ld	bc, 320
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	de, (_scrollX)
+	add	iy, de
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 40
+	push	hl
+	ld	hl, 320
+	push	hl
+	ld	hl, 100
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	ld	hl, 112
+	push	hl
+	ld	hl, 156
+	push	hl
+	ld	hl, L_.str.4
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	hl, 500
+	push	hl
+	call	_delay
+	pop	hl
+	ld	hl, (_firstXBlock)
+	ld	bc, 320
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	de, (_scrollX)
+	add	iy, de
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 40
+	push	hl
+	ld	hl, 320
+	push	hl
+	ld	hl, 100
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	ld	hl, 112
+	push	hl
+	ld	hl, 144
+	push	hl
+	ld	hl, L_.str.5
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	hl, 500
+	push	hl
+	call	_delay
+	pop	hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_nextStage
+_nextStage:
+	ld	hl, -12
+	call	__frameset
+	ld	de, (_scrollY)
+	ld	bc, 240
+BB6_1:
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB6_3
+	ld	hl, (_firstXBlock)
+	ld	bc, 320
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	bc, (_scrollX)
+	add	iy, bc
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	add	hl, de
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	call	_gfx_SwapDraw
+	ld	bc, 240
+	ld	hl, (_scrollY)
+	ld	de, 8
+	add	hl, de
+	ld	(_scrollY), hl
+	ex	de, hl
+	jq	BB6_1
+BB6_3:
+	ld	hl, 500
+	push	hl
+	call	_delay
+	pop	hl
+	ld	hl, (_stage)
+	ld	(ix + -3), hl
+	inc	hl
+	ld	(ix + -12), hl
+	ld	(_stage), hl
+	ld	iy, (_lifes)
+	ld	de, 150
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB6_5
+	ld	iy, 150
+BB6_5:
+	ld	de, 50
+	add	iy, de
+	ld	(_lifes), iy
+	ld	iy, 0
+	ld	(_scrollX), iy
+	ld	hl, 160
+	ld	(_playerX), hl
+	ld	hl, 153
+	ld	(_playerY), hl
+	ld	(_playerDirection), iy
+	ld	hl, 1
+	ld	(_playerAnimation), hl
+	ld	(_playerAnimationCount), hl
+	ld	(_playerGrounded), hl
+	ld	(_playerJump), iy
+	ld	de, 90
+BB6_6:
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	jq	z, BB6_7
+	lea	bc, iy + 0
+	ld	hl, _enemy
+	add	hl, bc
+	ld	de, 0
+	ld	(hl), de
+	ld	hl, _enemyX
+	add	hl, bc
+	ld	(hl), de
+	ld	hl, _enemyY
+	add	hl, bc
+	ld	(hl), de
+	ld	de, 90
+	ld	bc, 3
+	add	iy, bc
+	jq	BB6_6
+BB6_7:
+	ld	de, 24
+	ld	iy, 0
+BB6_9:
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	jq	z, BB6_11
+	lea	bc, iy + 0
+	ld	hl, _explosionAnimation
+	add	hl, bc
+	ld	bc, 0
+	ld	(hl), bc
+	ld	bc, 3
+	add	iy, bc
+	jq	BB6_9
+BB6_11:
+	ld	de, 4
+	ld	iy, (ix + -3)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	ld	de, 8
+	jq	z, BB6_13
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB6_14
+BB6_13:
+	ld	hl, (_playerWalkSpeed)
+	ld	de, 2
+	add	hl, de
+	ld	(_playerWalkSpeed), hl
+	ld	hl, (_playerAnimationSpeed)
+	dec	hl
+	ld	(_playerAnimationSpeed), hl
+	ld	hl, (_playerJumpHeight)
+	dec	hl
+	ld	(_playerJumpHeight), hl
+	ld	hl, (_playerJumpSpeed)
+	inc	hl
+	ld	(_playerJumpSpeed), hl
+	ld	hl, (_playerFallSpeed)
+	inc	hl
+	ld	(_playerFallSpeed), hl
+	ld	hl, (_enemy1Speed)
+	inc	hl
+	ld	(_enemy1Speed), hl
+	ld	hl, (_enemy2Speed)
+	add	hl, de
+	ld	(_enemy2Speed), hl
+	ld	hl, (_enemy3Speed)
+	inc	de
+	add	hl, de
+	ld	(_enemy3Speed), hl
+	ld	hl, (_universal2AnimationSpeed)
+	dec	hl
+	ld	(_universal2AnimationSpeed), hl
+	ld	hl, (_enemySpawnTime)
+	ld	de, -2
+	add	hl, de
+	ld	(_enemySpawnTime), hl
+BB6_14:
+	lea	hl, iy + 0
+	ld	bc, -4
+	call	__iand
+	ld	(ix + -9), hl
+	lea	hl, iy + 0
+	inc	bc
+	add	hl, bc
+	ld	(ix + -6), hl
+	lea	hl, iy + 0
+	ld	bc, -7
+	add	hl, bc
+	push	hl
+	pop	bc
+	lea	hl, iy + 0
+	ld	de, 8
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB6_16
+	ld	bc, (ix + -12)
+BB6_16:
+	ld	hl, (ix + -9)
+	ld	de, 4
+	push	de
+	pop	iy
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	jq	z, BB6_18
+	push	bc
+	pop	de
+BB6_18:
+	ld	(_i), de
+	dec	de
+	push	de
+	pop	hl
+	lea	bc, iy + 0
+	or	a, a
+	sbc	hl, bc
+	jq	nc, BB6_20
+	ld	bc, 3
+	ex	de, hl
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, L_switch.table.nextStage
+	add	hl, de
+	ld	hl, (hl)
+	ld	(ix + -3), hl
+	ld	hl, L_switch.table.nextStage.57
+	add	hl, de
+	ld	bc, (hl)
+	ld	hl, L_switch.table.nextStage.58
+	add	hl, de
+	ld	hl, (hl)
+	ld	(ix + -6), hl
+	ld	iy, L_switch.table.nextStage.59
+	add	iy, de
+	ld	de, (iy)
+	ld	hl, (ix + -3)
+	ld	(_firstXBlock), hl
+	ld	(_firstYBlock), bc
+	ld	bc, 320
+	ld	(_maxScrollX), bc
+	ld	hl, (ix + -6)
+	ld	(_endLeft), hl
+	ld	(_endRight), de
+	ld	hl, 153
+	ld	(_endDown), hl
+BB6_20:
+	ld	de, (_scrollY)
+	ld	bc, 1
+BB6_21:
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB6_23
+	ld	hl, (_firstXBlock)
+	ld	bc, 320
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	bc, (_scrollX)
+	add	iy, bc
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	add	hl, de
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	call	_gfx_SwapDraw
+	ld	bc, 1
+	ld	hl, (_scrollY)
+	ld	de, -8
+	add	hl, de
+	ld	(_scrollY), hl
+	ex	de, hl
+	jq	BB6_21
+BB6_23:
+	ld	sp, ix
+	pop	ix
+	jp	_countIn
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_stageChecker
+_stageChecker:
+	ld	bc, -4
+	ld	iy, (_stage)
+	lea	hl, iy + 0
+	call	__iand
+	ld	de, 4
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB7_2
+	ld	de, -40000
+	ld	hl, (_score)
+	add	hl, de
+	ld	(_a), hl
+	add	iy, bc
+	jq	BB7_5
+BB7_2:
+	ld	bc, (_score)
+	ld	de, 8
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB7_4
+	ld	de, -80000
+	push	bc
+	pop	hl
+	add	hl, de
+	ld	(_a), hl
+	ld	de, -8
+	add	iy, de
+	jq	BB7_5
+BB7_4:
+	push	bc
+	pop	hl
+	ld	(_a), hl
+BB7_5:
+	lea	bc, iy + 0
+	ld	(_i), iy
+	ld	de, 10000
+	push	hl
+	pop	iy
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB7_7
+	ld	de, 1
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB7_13
+BB7_7:
+	ld	de, -10000
+	lea	hl, iy + 0
+	add	hl, de
+	ld	de, 10000
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB7_9
+	ld	de, 2
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB7_13
+BB7_9:
+	ld	de, -20000
+	lea	hl, iy + 0
+	add	hl, de
+	ld	de, 10000
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB7_11
+	ld	de, 3
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB7_13
+BB7_11:
+	ld	de, -30000
+	add	iy, de
+	lea	hl, iy + 0
+	ld	de, 10000
+	or	a, a
+	sbc	hl, de
+	jq	nc, BB7_14
+	push	bc
+	pop	hl
+	ld	de, 4
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB7_14
+BB7_13:
+	call	_nextStage
+BB7_14:
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_universalAnimationHandler
+_universalAnimationHandler:
+	ld	de, (_universal2AnimationCount)
+	ld	bc, (_universal2AnimationSpeed)
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB8_1
+	inc	de
+	ld	(_universal2AnimationCount), de
+	ret
+BB8_1:
+	ld	iy, 1
+	ld	(_universal2AnimationCount), iy
+	ld	de, (_universal2Animation)
+	ld	bc, 2
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB8_3
+	ld	(_universal2Animation), iy
+	ret
+BB8_3:
+	inc	de
+	ld	(_universal2Animation), de
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_shopHandler
+_shopHandler:
+	ld	iyl, 1
+	ld	de, (_shopTimer)
+	push	de
+	pop	hl
+	dec	hl
+	ld	(_shopTimer), hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB9_3
+	ld	hl, (_score)
+	ld	bc, 120000
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB9_3
+	ld	hl, 1
+	ld	(_shopActive), hl
+	ld	a, iyl
+	jq	BB9_10
+BB9_3:
+	ld	bc, -198
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB9_6
+	ld	hl, 600
+	ld	de, 0
+	ld	(_shopActive), de
+	ld	(_shopTimer), hl
+	jq	BB9_5
+BB9_6:
+	ld	hl, (_shopActive)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	z, BB9_8
+	ld	a, 0
+	jq	BB9_10
+BB9_8:
+	ld	a, 1
+BB9_10:
+	xor	a, iyl
+	bit	0, a
+	jq	nz, BB9_5
+	ld	de, (_scrollX)
+	ld	bc, 161
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB9_5
+	ld	hl, 480
+	ld	bc, (_universal2Animation)
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	iy
+	ld	de, (_endDown)
+	push	bc
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB9_15
+	ld	hl, _shopGuy1_data
+	jq	BB9_14
+BB9_5:
+	ret
+BB9_15:
+	ld	hl, _shopGuy2_data
+BB9_14:
+	push	de
+	push	iy
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_explosionScreenCheck
+_explosionScreenCheck:
+	ld	iy, _explosionX
+	ld	de, -34
+	ld	hl, (_i)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	add	iy, bc
+	ld	hl, (iy)
+	ld	bc, (_scrollX)
+	add	hl, de
+	or	a, a
+	sbc	hl, bc
+	ld	de, 253
+	or	a, a
+	sbc	hl, de
+	jq	c, BB10_1
+	ld	a, 0
+	ret
+BB10_1:
+	ld	a, 1
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_explosionHandler
+_explosionHandler:
+	ld	hl, -6
+	call	__frameset
+	ld	iy, _explosionAnimation
+	ld	bc, 0
+	ld	de, 8
+BB11_1:
+	ld	(_i), bc
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB11_18
+	ld	(ix + -3), bc
+	push	bc
+	pop	hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	lea	hl, iy + 0
+	add	hl, de
+	ld	hl, (hl)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB11_8
+	ld	(ix + -6), hl
+	call	_explosionScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB11_7
+	ld	hl, (ix + -6)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	de
+	ld	bc, 7
+	or	a, a
+	sbc	hl, bc
+	ld	iy, _explosionAnimation
+	jq	nc, BB11_6
+	ld	hl, LJTI11_0
+	add	hl, de
+	add	hl, de
+	add	hl, de
+	ld	hl, (hl)
+	jp	(hl)
+BB11_10:
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _explosionX
+	add	hl, de
+	ld	hl, (hl)
+	ld	bc, (_scrollX)
+	or	a, a
+	sbc	hl, bc
+	ld	iy, _explosionY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	push	hl
+	ld	hl, _explosion1_data
+	jq	BB11_11
+BB11_7:
+	ld	iy, _explosionAnimation
+	jq	BB11_8
+BB11_12:
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _explosionX
+	add	hl, de
+	ld	hl, (hl)
+	ld	bc, (_scrollX)
+	or	a, a
+	sbc	hl, bc
+	ld	iy, _explosionY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	push	hl
+	ld	hl, _explosion2_data
+	jq	BB11_11
+BB11_13:
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _explosionX
+	add	hl, de
+	ld	hl, (hl)
+	ld	bc, (_scrollX)
+	or	a, a
+	sbc	hl, bc
+	ld	iy, _explosionY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	push	hl
+	ld	hl, _explosion3_data
+	jq	BB11_11
+BB11_14:
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _explosionX
+	add	hl, de
+	ld	hl, (hl)
+	ld	bc, (_scrollX)
+	or	a, a
+	sbc	hl, bc
+	ld	iy, _explosionY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	push	hl
+	ld	hl, _explosion4_data
+BB11_11:
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, _explosionAnimation
+BB11_6:
+	ld	hl, (_i)
+	ld	(ix + -3), hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	lea	hl, iy + 0
+	add	hl, de
+	ld	de, (hl)
+	inc	de
+	ld	(hl), de
+BB11_8:
+	ld	bc, (ix + -3)
+	inc	bc
+	ld	de, 8
+	jq	BB11_1
+BB11_17:
+	ld	hl, (ix + -3)
+	ld	de, 3
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _explosionX
+	add	hl, de
+	ld	hl, (hl)
+	ld	bc, (_scrollX)
+	or	a, a
+	sbc	hl, bc
+	ld	iy, _explosionY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	push	hl
+	ld	hl, _explosion1_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_i)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, _explosionAnimation
+	lea	hl, iy + 0
+	add	hl, de
+	ld	de, -1
+	ld	(hl), de
+	jq	BB11_6
+BB11_18:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+	section	.rodata,"a",@progbits
+lJTI11_0:
+	private	LJTI11_0
+LJTI11_0:
+	dl	BB11_10
+	dl	BB11_12
+	dl	BB11_13
+	dl	BB11_14
+	dl	BB11_13
+	dl	BB11_12
+	dl	BB11_17
+
+	section	.text,"ax",@progbits
+	public	_enemyScreenCheck
+_enemyScreenCheck:
+	ld	iy, _enemyX
+	ld	de, -34
+	ld	hl, (_i)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	add	iy, bc
+	ld	hl, (iy)
+	ld	bc, (_scrollX)
+	add	hl, de
+	or	a, a
+	sbc	hl, bc
+	ld	de, 253
+	or	a, a
+	sbc	hl, de
+	jq	c, BB12_1
+	ld	a, 0
+	ret
+BB12_1:
+	ld	a, 1
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_enemyHandler
+_enemyHandler:
+	ld	hl, -18
+	call	__frameset
+	ld	bc, (_enemyTimer)
+	ld	hl, (_damageMultiplier)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, (_enemyPositioner)
+	ld	(ix + -3), de
+	add	hl, de
+	ld	(_enemyPositioner), hl
+	ld	iy, (_endLeft)
+	ld	de, 4
+	add	iy, de
+	ld	(ix + -6), iy
+	lea	de, iy + 0
+	push	hl
+	pop	iy
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB13_2
+	ld	de, -34
+	ld	hl, (_endRight)
+	add	hl, de
+	ex	de, hl
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB13_3
+BB13_2:
+	ld	de, (ix + -3)
+	ld	iy, (ix + -6)
+	add	iy, de
+	ld	(_enemyPositioner), iy
+BB13_3:
+	ld	(ix + -6), iy
+	push	bc
+	pop	hl
+	dec	hl
+	ld	(_enemyTimer), hl
+	ld	de, 2
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	ld	bc, 30
+	jq	p, BB13_14
+	ld	de, -5
+	ld	hl, (_enemySpawnTime)
+	ld	(_enemyTimer), hl
+	ld	iy, (_stage)
+	lea	hl, iy + 0
+	add	hl, de
+	ld	(ix + -9), hl
+	lea	hl, iy + 0
+	inc	de
+	add	hl, de
+	ld	(ix + -3), hl
+	lea	hl, iy + 0
+	ld	de, -8
+	add	hl, de
+	push	hl
+	pop	bc
+	ld	de, 9
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_6
+	lea	bc, iy + 0
+BB13_6:
+	ld	de, 4
+	ld	hl, (ix + -9)
+	or	a, a
+	sbc	hl, de
+	jq	c, BB13_8
+	ld	(ix + -3), bc
+BB13_8:
+	ld	hl, (ix + -3)
+	ld	(_a), hl
+	ld	iy, _enemy
+	ld	hl, _enemyX
+	ld	(ix + -9), hl
+	ld	de, 0
+	ld	bc, 30
+BB13_9:
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB13_12
+	ld	hl, (iy)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB13_13
+	inc	de
+	lea	hl, iy + 0
+	ld	iy, (ix + -9)
+	lea	iy, iy + 3
+	ld	(ix + -9), iy
+	push	hl
+	pop	iy
+	lea	iy, iy + 3
+	jq	BB13_9
+BB13_12:
+	ld	hl, 30
+	ld	(_i), hl
+BB13_191:
+	ld	bc, 30
+BB13_14:
+	ld	hl, (_timeStopActive)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB13_16
+	ld	hl, (_enemy1Speed)
+	ld	(_enemy1SpeedBackup), hl
+	or	a, a
+	sbc	hl, hl
+	ex	de, hl
+	ld	(_enemy1Speed), de
+	ld	hl, (_enemy2Speed)
+	ld	(_enemy2SpeedBackup), hl
+	ld	(_enemy2Speed), de
+	ld	hl, (_enemy3Speed)
+	ld	(_enemy3SpeedBackup), hl
+	ld	(_enemy3Speed), de
+BB13_16:
+	ld	de, 3
+	ld	iy, 0
+BB13_17:
+	ld	(_i), iy
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_171
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemy
+	add	hl, de
+	ld	de, (hl)
+	push	de
+	pop	hl
+	ld	bc, 7
+	or	a, a
+	sbc	hl, bc
+	jq	nc, BB13_19
+	ld	hl, LJTI13_1
+	add	hl, de
+	add	hl, de
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, 3
+	jp	(hl)
+BB13_29:
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	(ix + -3), iy
+	ld	iy, _enemyY
+	add	iy, bc
+	ld	bc, (iy)
+	ld	hl, (_endDown)
+	ld	de, -8
+	add	hl, de
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_58
+	dec	bc
+	ld	(ix + -6), bc
+	ld	(iy), bc
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	ld	hl, (ix + -3)
+	jq	nz, BB13_19
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+BB13_62:
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	push	de
+	push	hl
+	ld	hl, _enemy1_1_data
+	jq	BB13_39
+BB13_32:
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	(ix + -3), iy
+	ld	iy, _enemyY
+	add	iy, bc
+	ld	bc, (iy)
+	ld	hl, (_endDown)
+	ld	de, -8
+	add	hl, de
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_63
+	dec	bc
+	ld	(ix + -6), bc
+	ld	(iy), bc
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	ld	hl, (ix + -3)
+	jq	nz, BB13_19
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+BB13_67:
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	push	de
+	push	hl
+	ld	hl, _enemy2_1_data
+	jq	BB13_39
+BB13_35:
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	(ix + -3), iy
+	ld	iy, _enemyY
+	add	iy, bc
+	ld	bc, (iy)
+	ld	hl, (_endDown)
+	ld	de, -6
+	add	hl, de
+	ld	(ix + -6), bc
+	push	bc
+	pop	de
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_68
+	ld	de, -3
+	ld	hl, (ix + -6)
+	add	hl, de
+	ld	(ix + -6), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	ld	hl, (ix + -3)
+	jq	nz, BB13_19
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	push	de
+	push	hl
+BB13_38:
+	ld	hl, _enemy3_1_data
+	jq	BB13_39
+BB13_41:
+	ld	(ix + -3), iy
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, _enemyY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	pop	hl
+	ld	bc, 128
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_70
+	ld	hl, (_enemy2Speed)
+	add	hl, de
+	jq	BB13_43
+BB13_45:
+	ld	(ix + -3), iy
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, _enemyY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	pop	hl
+	ld	bc, 92
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_72
+	ld	hl, (_enemy3Speed)
+	add	hl, de
+	ld	(ix + -6), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_81
+	ld	hl, (ix + -3)
+	ld	de, 3
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	push	de
+	push	hl
+	ld	hl, _enemy5_1_data
+	push	hl
+	call	_gfx_TransparentSprite
+	ld	bc, 3
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	iy, (_i)
+	lea	hl, iy + 0
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyY
+	add	hl, de
+	ld	hl, (hl)
+	ld	(ix + -6), hl
+	jq	BB13_83
+BB13_48:
+	ld	(ix + -3), iy
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, _enemyY
+	add	iy, de
+	ld	de, (iy)
+	push	de
+	pop	hl
+	ld	bc, 84
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_99
+	ld	hl, (_enemy2Speed)
+	add	hl, de
+	ld	(ix + -6), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_98
+	ld	hl, (ix + -3)
+	ld	de, 3
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	push	de
+	push	hl
+	ld	hl, _enemy6_1_data
+	push	hl
+	call	_gfx_TransparentSprite
+	ld	iy, 3
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_i)
+	ld	(ix + -3), hl
+	lea	bc, iy + 0
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyY
+	add	hl, de
+	ld	de, (hl)
+	jq	BB13_100
+BB13_58:
+	ld	(ix + -6), bc
+	ld	de, (_playerX)
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemyX
+	add	iy, bc
+	ld	bc, (iy)
+	ld	hl, (_enemy1Speed)
+	ld	(ix + -3), hl
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_105
+	push	bc
+	pop	hl
+	ld	de, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	ld	(ix + -3), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_153
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	jq	BB13_62
+BB13_63:
+	ld	(ix + -6), bc
+	ld	de, (_playerX)
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemyX
+	add	iy, bc
+	ld	bc, (iy)
+	ld	hl, (_enemy2Speed)
+	ld	(ix + -3), hl
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_109
+	push	bc
+	pop	hl
+	ld	de, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	ld	(ix + -3), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_155
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	jq	BB13_67
+BB13_68:
+	call	_random
+	push	hl
+	pop	de
+	ld	(_a), de
+	ld	hl, (_playerX)
+	ld	(ix + -3), hl
+	ld	hl, (_i)
+	ld	(ix + -6), hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemyX
+	add	iy, bc
+	ld	bc, (iy)
+	ex	de, hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_112
+	push	bc
+	pop	de
+	jq	BB13_119
+BB13_70:
+	push	de
+	pop	hl
+	ld	bc, 149
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB13_127
+	ld	bc, (_enemy2Speed)
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+BB13_43:
+	ld	(ix + -6), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	ld	hl, (ix + -3)
+	jq	nz, BB13_19
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+BB13_133:
+	push	de
+	push	hl
+	ld	hl, _enemy4_1_data
+	jq	BB13_39
+BB13_72:
+	ld	bc, 3
+	ld	(ix + -6), de
+	jq	BB13_82
+BB13_81:
+	ld	bc, 3
+BB13_82:
+	ld	iy, (ix + -3)
+BB13_83:
+	ld	(ix + -3), iy
+	lea	hl, iy + 0
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemyY
+	add	iy, bc
+	ld	hl, (_endDown)
+	ld	bc, -6
+	add	hl, bc
+	ld	de, (ix + -6)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	ex	de, hl
+	jq	p, BB13_86
+	ld	bc, (_enemy3Speed)
+	or	a, a
+	sbc	hl, bc
+	ld	(ix + -6), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	ld	hl, (ix + -3)
+	jq	nz, BB13_19
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+BB13_92:
+	push	de
+	push	hl
+	ld	hl, _enemy5_1_data
+	jq	BB13_39
+BB13_86:
+	ld	hl, (_enemyTimer)
+	ld	(ix + -9), hl
+	ld	hl, (_enemy2Speed)
+	ld	(ix + -12), hl
+	ld	bc, (_enemy3Speed)
+	or	a, a
+	sbc	hl, hl
+	or	a, a
+	sbc	hl, bc
+	push	hl
+	pop	de
+	ld	hl, (ix + -9)
+	ld	bc, 5
+	or	a, a
+	sbc	hl, bc
+	ex	de, hl
+	call	__setflag
+	jq	m, BB13_88
+	ld	hl, (ix + -12)
+BB13_88:
+	ld	de, (ix + -6)
+	add	hl, de
+	ld	(ix + -9), hl
+	ld	(iy), hl
+	ld	de, (_playerX)
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyX
+	add	hl, bc
+	ld	(ix + -3), hl
+	ld	bc, (hl)
+	ex	de, hl
+	ld	(ix + -6), bc
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_93
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_93
+	ld	de, (_enemy1Speed)
+	ld	hl, (ix + -6)
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	iy
+	ld	hl, (ix + -3)
+	ld	(hl), iy
+	ld	bc, (_universal2Animation)
+	push	bc
+	pop	hl
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_157
+	ld	bc, (_scrollX)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, bc
+	ld	de, (ix + -9)
+	jq	BB13_92
+BB13_93:
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	iy, (_enemy1Speed)
+	ld	de, (ix + -6)
+	add	iy, de
+	ld	hl, (ix + -3)
+	ld	(hl), iy
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_147
+	ld	de, (_enemy5_1Flipped)
+	jq	BB13_96
+BB13_98:
+	ld	de, (ix + -6)
+BB13_99:
+	ld	iy, 3
+BB13_100:
+	ld	hl, (_endDown)
+	ld	bc, -8
+	add	hl, bc
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_103
+	ld	hl, (ix + -3)
+	lea	bc, iy + 0
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemyY
+	add	iy, bc
+	ld	bc, (_enemy2Speed)
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	ld	(ix + -6), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	de, (ix + -3)
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ex	de, hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (_scrollX)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+BB13_139:
+	push	de
+	push	hl
+	ld	hl, _enemy6_1_data
+BB13_39:
+	push	hl
+BB13_40:
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+BB13_19:
+	ld	hl, (_playerDirection)
+	ld	iy, (_playerX)
+	lea	bc, iy + 0
+	ld	de, -4
+	add	iy, de
+	ld	(ix + -9), hl
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	z, BB13_21
+	push	bc
+	pop	iy
+BB13_21:
+	ld	(ix + -6), iy
+	ld	(_a), iy
+	ld	hl, (_i)
+	ld	(ix + -3), hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyX
+	add	hl, bc
+	ld	iy, (hl)
+	lea	hl, iy + 0
+	ld	bc, -28
+	add	hl, bc
+	push	hl
+	pop	bc
+	ld	(ix + -12), iy
+	ld	de, 28
+	add	iy, de
+	ld	de, (ix + -6)
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB13_25
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB13_25
+	ld	hl, (_playerY)
+	ld	(ix + -15), hl
+	ld	hl, (ix + -3)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyY
+	add	hl, bc
+	ld	iy, (hl)
+	lea	hl, iy + 0
+	ld	bc, -28
+	add	hl, bc
+	push	hl
+	pop	bc
+	ld	(ix + -18), iy
+	ld	de, 28
+	add	iy, de
+	ld	de, (ix + -15)
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB13_25
+	lea	hl, iy + 0
+	push	de
+	pop	bc
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	push	de
+	pop	iy
+	jq	m, BB13_25
+	ld	bc, (_sword)
+	ld	hl, 6
+	call	__idivs
+	push	hl
+	pop	bc
+	ld	hl, (ix + -9)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_73
+	ld	de, (ix + -6)
+	push	bc
+	pop	hl
+	add	hl, de
+	ld	(ix + -6), hl
+	lea	hl, iy + 0
+	ld	de, -10
+	add	hl, de
+	push	hl
+	pop	bc
+	ld	de, 10
+	add	iy, de
+	lea	de, iy + 0
+	ld	iy, (ix + -18)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_78
+	push	bc
+	pop	hl
+	lea	de, iy + 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_78
+	ld	hl, (ix + -6)
+	ld	de, (ix + -12)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_78
+	ld	hl, (ix + -3)
+	ld	de, 3
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, _enemy
+	add	iy, de
+	ld	hl, (iy)
+	ld	bc, 75
+	call	__imulu
+	ld	bc, (_damageMultiplier)
+	call	__idivs
+	push	hl
+	pop	de
+	ld	hl, (_score)
+	add	hl, de
+	ld	(_score), hl
+	or	a, a
+	sbc	hl, hl
+	ld	(iy), hl
+	ld	de, 3
+	ld	hl, 2
+	push	hl
+	pop	bc
+	ld	iy, (ix + -12)
+	add	iy, bc
+	ld	hl, (_currentExplosion)
+	ld	(ix + -6), hl
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	(ix + -9), bc
+	ld	hl, _explosionX
+	add	hl, bc
+	ld	(hl), iy
+	ld	iy, (ix + -18)
+	ld	bc, 2
+	add	iy, bc
+	ld	hl, _explosionY
+	ld	bc, (ix + -9)
+	add	hl, bc
+	ld	(hl), iy
+	ld	iy, (ix + -6)
+	ld	hl, _explosionAnimation
+	add	hl, bc
+	ld	bc, 1
+	ld	(hl), bc
+	lea	hl, iy + 0
+	ld	bc, 7
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	ld	hl, 0
+	jq	p, BB13_57
+	inc	iy
+	lea	hl, iy + 0
+	jq	BB13_57
+BB13_103:
+	call	_random
+	ld	(_a), hl
+	ld	hl, (_enemyTimer)
+	ld	de, 5
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_134
+	ld	hl, (_enemy3Speed)
+	ld	(ix + -6), hl
+	ld	hl, (_i)
+	ld	(ix + -3), hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, _enemyY
+	add	iy, de
+	ld	hl, (iy)
+	ld	de, (ix + -6)
+	or	a, a
+	sbc	hl, de
+	jq	BB13_135
+BB13_73:
+	ld	hl, (ix + -6)
+	or	a, a
+	sbc	hl, bc
+	ld	(ix + -6), hl
+	lea	hl, iy + 0
+	ld	bc, -10
+	add	hl, bc
+	ex	de, hl
+	ld	bc, 10
+	add	iy, bc
+	lea	bc, iy + 0
+	ld	iy, (ix + -18)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_78
+	ex	de, hl
+	lea	bc, iy + 0
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_78
+	ld	hl, (ix + -12)
+	ld	de, (ix + -6)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_78
+	ld	hl, (ix + -3)
+	ld	de, 3
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	de
+	ld	iy, _enemy
+	add	iy, de
+	ld	hl, (iy)
+	ld	bc, 75
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, (_score)
+	add	hl, de
+	ld	(_score), hl
+	or	a, a
+	sbc	hl, hl
+	ld	(iy), hl
+	ld	de, 3
+	ld	hl, 2
+	push	hl
+	pop	bc
+	ld	iy, (ix + -12)
+	add	iy, bc
+	ld	hl, (_currentExplosion)
+	ld	(ix + -6), hl
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	(ix + -9), bc
+	ld	hl, _explosionX
+	add	hl, bc
+	ld	(hl), iy
+	ld	iy, (ix + -18)
+	ld	bc, 2
+	add	iy, bc
+	ld	hl, _explosionY
+	ld	bc, (ix + -9)
+	add	hl, bc
+	ld	(hl), iy
+	ld	hl, _explosionAnimation
+	add	hl, bc
+	ld	bc, 1
+	ld	(hl), bc
+	ld	hl, (ix + -6)
+	push	hl
+	pop	iy
+	ld	bc, 7
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	ld	hl, 0
+	jq	p, BB13_57
+	lea	hl, iy + 0
+	inc	hl
+BB13_57:
+	ld	(_currentExplosion), hl
+	jq	BB13_26
+BB13_78:
+	ld	hl, (_invincibilityActive)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_25
+	ld	de, (_damageMultiplier)
+	ld	hl, (_lifes)
+	or	a, a
+	sbc	hl, de
+	ld	(_lifes), hl
+BB13_25:
+	ld	de, 3
+BB13_26:
+	ld	iy, (ix + -3)
+BB13_27:
+	inc	iy
+	ld	bc, 30
+	jq	BB13_17
+BB13_105:
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(ix + -3), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_159
+	ld	de, (_enemy1_1Flipped)
+	jq	BB13_108
+BB13_109:
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(ix + -3), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_161
+	ld	de, (_enemy2_1Flipped)
+	jq	BB13_108
+BB13_112:
+	ld	(ix + -9), iy
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	ld	a, 1
+	jq	m, BB13_114
+	ld	a, 0
+BB13_114:
+	ld	iy, (_enemy3Speed)
+	push	bc
+	pop	hl
+	lea	de, iy + 0
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	de
+	add	iy, bc
+	bit	0, a
+	push	de
+	pop	bc
+	jq	nz, BB13_116
+	lea	hl, iy + 0
+	push	hl
+	pop	bc
+BB13_116:
+	bit	0, a
+	jq	nz, BB13_118
+	lea	de, iy + 0
+BB13_118:
+	ld	hl, (ix + -9)
+	ld	(hl), bc
+BB13_119:
+	ld	hl, (ix + -3)
+	ld	(ix + -3), de
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_123
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_123
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_163
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	de
+	ld	hl, (ix + -6)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyY
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	push	de
+	jq	BB13_38
+BB13_123:
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_149
+	ld	iy, (_enemy3_1Flipped)
+	jq	BB13_126
+BB13_127:
+	call	_random
+	push	hl
+	pop	de
+	ld	(_a), de
+	ld	hl, (_enemy1Speed)
+	ld	(ix + -3), hl
+	ld	hl, (_i)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemyY
+	ld	(ix + -6), bc
+	add	iy, bc
+	ld	(ix + -9), iy
+	ld	iy, (iy)
+	or	a, a
+	sbc	hl, hl
+	ld	bc, (ix + -3)
+	or	a, a
+	sbc	hl, bc
+	ld	(ix + -12), hl
+	ex	de, hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB13_129
+	ld	bc, (ix + -12)
+BB13_129:
+	add	iy, bc
+	ld	(ix + -12), iy
+	ld	hl, (ix + -9)
+	ld	(hl), iy
+	ld	hl, (_playerX)
+	ld	iy, _enemyX
+	ld	de, (ix + -6)
+	add	iy, de
+	ld	de, (iy)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_143
+	ex	de, hl
+	ld	de, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	ld	(ix + -3), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_167
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -12)
+	jq	BB13_133
+BB13_134:
+	ld	hl, (_enemy2Speed)
+	ld	(ix + -6), hl
+	ld	hl, (_i)
+	ld	(ix + -3), hl
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyY
+	push	hl
+	pop	iy
+	add	iy, de
+	ld	hl, (iy)
+	ld	de, (ix + -6)
+	add	hl, de
+BB13_135:
+	ld	(ix + -9), hl
+	ld	(iy), hl
+	ld	hl, (ix + -3)
+	ld	de, (_playerX)
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyX
+	add	hl, bc
+	ld	(ix + -3), hl
+	ld	bc, (hl)
+	ex	de, hl
+	ld	(ix + -6), bc
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB13_140
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_140
+	ld	de, (_enemy2Speed)
+	ld	hl, (ix + -6)
+	inc	hl
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	iy
+	ld	hl, (ix + -3)
+	ld	(hl), iy
+	ld	bc, (_universal2Animation)
+	push	bc
+	pop	hl
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_165
+	ld	bc, (_scrollX)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, bc
+	ld	de, (ix + -9)
+	jq	BB13_139
+BB13_140:
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_enemy2Speed)
+	ld	iy, (ix + -6)
+	dec	iy
+	add	iy, de
+	ld	hl, (ix + -3)
+	ld	(hl), iy
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_151
+	ld	de, (_enemy6_1Flipped)
+	jq	BB13_96
+BB13_143:
+	ld	hl, (ix + -3)
+	add	hl, de
+	ld	(ix + -3), hl
+	ld	(iy), hl
+	call	_enemyScreenCheck
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	jq	nz, BB13_19
+	ld	de, (_universal2Animation)
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_169
+	ld	de, (_enemy4_1Flipped)
+	jq	BB13_146
+BB13_147:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_enemy5_2Flipped)
+	jq	BB13_96
+BB13_149:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	iy, (_enemy3_2Flipped)
+BB13_126:
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	de
+	ld	hl, (ix + -6)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyY
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	push	de
+	push	iy
+	jq	BB13_40
+BB13_151:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_enemy6_2Flipped)
+BB13_96:
+	ld	bc, (_scrollX)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, bc
+	ld	bc, (ix + -9)
+	jq	BB13_97
+BB13_153:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	push	de
+	push	hl
+	ld	hl, _enemy1_2_data
+	jq	BB13_39
+BB13_155:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -6)
+	push	de
+	push	hl
+	ld	hl, _enemy2_2_data
+	jq	BB13_39
+BB13_157:
+	push	bc
+	pop	hl
+	ld	bc, 2
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_19
+	ld	bc, (_scrollX)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, bc
+	ld	de, (ix + -9)
+	push	de
+	push	hl
+	ld	hl, _enemy5_2_data
+	jq	BB13_39
+BB13_159:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_enemy1_2Flipped)
+	jq	BB13_108
+BB13_161:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_enemy2_2Flipped)
+BB13_108:
+	ld	bc, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, bc
+	ld	bc, (ix + -6)
+	jq	BB13_97
+BB13_163:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	de
+	ld	hl, (ix + -6)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _enemyY
+	add	hl, bc
+	ld	hl, (hl)
+	push	hl
+	push	de
+	ld	hl, _enemy3_2_data
+	jq	BB13_39
+BB13_165:
+	push	bc
+	pop	hl
+	ld	bc, 2
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB13_19
+	ld	bc, (_scrollX)
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, bc
+	ld	de, (ix + -9)
+	push	de
+	push	hl
+	ld	hl, _enemy6_2_data
+	jq	BB13_39
+BB13_167:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix + -12)
+	push	de
+	push	hl
+	ld	hl, _enemy4_2_data
+	jq	BB13_39
+BB13_169:
+	ex	de, hl
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB13_19
+	ld	de, (_enemy4_2Flipped)
+BB13_146:
+	ld	bc, (_scrollX)
+	ld	hl, (ix + -3)
+	or	a, a
+	sbc	hl, bc
+	ld	bc, (ix + -12)
+BB13_97:
+	push	bc
+	push	hl
+	push	de
+	jq	BB13_40
+BB13_171:
+	ld	hl, (_timeStopActive)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB13_173
+	ld	hl, (_enemy1SpeedBackup)
+	ld	(_enemy1Speed), hl
+	ld	hl, (_enemy2SpeedBackup)
+	ld	(_enemy2Speed), hl
+	ld	hl, (_enemy3SpeedBackup)
+	ld	(_enemy3Speed), hl
+BB13_173:
+	ld	sp, ix
+	pop	ix
+	ret
+BB13_13:
+	ld	(_i), de
+	ld	hl, (ix + -6)
+	ld	iy, (ix + -9)
+	ld	(iy), hl
+	ld	hl, (ix + -3)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	push	hl
+	pop	de
+	ld	bc, 4
+	or	a, a
+	sbc	hl, bc
+	ld	bc, 30
+	jq	nc, BB13_14
+	ld	hl, LJTI13_0
+	add	hl, de
+	add	hl, de
+	add	hl, de
+	ld	hl, (hl)
+	jp	(hl)
+BB13_175:
+	call	_random
+	push	hl
+	pop	de
+	ld	(_a), de
+	ld	hl, (_i)
+	ld	bc, 3
+	ld	(ix + -3), hl
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemy
+	add	iy, bc
+	ex	de, hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_185
+	jq	BB13_176
+BB13_178:
+	call	_random
+	push	hl
+	pop	de
+	ld	(_a), de
+	ld	hl, (_i)
+	ld	bc, 3
+	ld	(ix + -3), hl
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemy
+	add	iy, bc
+	ex	de, hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB13_179
+	ld	hl, 4
+	ld	(iy), hl
+	ld	bc, 3
+	ld	hl, (ix + -3)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyY
+	add	hl, de
+	ld	de, 42
+	jq	BB13_190
+BB13_180:
+	call	_random
+	ld	(_a), hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_187
+	call	_random
+	push	hl
+	pop	de
+	ld	(_a), de
+	ld	hl, (_i)
+	ld	bc, 3
+	ld	(ix + -3), hl
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemy
+	add	iy, bc
+	ex	de, hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_182
+BB13_176:
+	ld	hl, 1
+	ld	(iy), hl
+	ld	iy, (_endDown)
+	ld	de, 24
+	jq	BB13_177
+BB13_183:
+	call	_random
+	ld	(_a), hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_188
+	call	_random
+	push	hl
+	pop	de
+	ld	(_a), de
+	ld	hl, (_i)
+	ld	bc, 3
+	ld	(ix + -3), hl
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	iy, _enemy
+	add	iy, bc
+	ex	de, hl
+	ld	de, 0
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB13_179
+BB13_185:
+	ld	hl, 2
+	ld	(iy), hl
+	ld	iy, (_endDown)
+	ld	de, 20
+	jq	BB13_177
+BB13_179:
+	ld	hl, 3
+	ld	(iy), hl
+	ld	iy, (_endDown)
+	ld	de, 22
+BB13_177:
+	add	iy, de
+	ld	bc, 3
+	ld	hl, (ix + -3)
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemyY
+	add	hl, de
+	ld	(hl), iy
+	jq	BB13_191
+BB13_187:
+	ld	hl, (_i)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemy
+	add	hl, de
+	ld	bc, 5
+	ld	(hl), bc
+	ld	hl, _enemyY
+	add	hl, de
+	ld	de, 92
+	jq	BB13_190
+BB13_188:
+	ld	hl, (_i)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _enemy
+	add	hl, de
+	ld	bc, 6
+	ld	(hl), bc
+	jq	BB13_189
+BB13_182:
+	ld	hl, 4
+	ld	(iy), hl
+	ld	bc, 3
+	ld	hl, (ix + -3)
+	call	__imulu
+	push	hl
+	pop	de
+BB13_189:
+	ld	hl, _enemyY
+	add	hl, de
+	ld	de, 84
+BB13_190:
+	ld	(hl), de
+	jq	BB13_191
+	section	.text,"ax",@progbits
+	section	.rodata,"a",@progbits
+lJTI13_0:
+	private	LJTI13_0
+LJTI13_0:
+	dl	BB13_175
+	dl	BB13_178
+	dl	BB13_180
+	dl	BB13_183
+lJTI13_1:
+	private	LJTI13_1
+LJTI13_1:
+	dl	BB13_27
+	dl	BB13_29
+	dl	BB13_32
+	dl	BB13_35
+	dl	BB13_41
+	dl	BB13_45
+	dl	BB13_48
+
+	section	.text,"ax",@progbits
+	public	_main
+_main:
+	ld	hl, -9
+	call	__frameset
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 23
+	push	hl
+	ld	hl, 17
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_playerWalking1Flipped), hl
+	push	hl
+	ld	hl, _playerWalking1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 23
+	push	hl
+	ld	hl, 17
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_playerWalking2Flipped), hl
+	push	hl
+	ld	hl, _playerWalking2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 23
+	push	hl
+	ld	hl, 17
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_playerWalking3Flipped), hl
+	push	hl
+	ld	hl, _playerWalking3_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 23
+	push	hl
+	ld	hl, 17
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_playerWalking4Flipped), hl
+	push	hl
+	ld	hl, _playerWalking4_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 7
+	push	hl
+	ld	hl, 25
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_sword1Flipped), hl
+	push	hl
+	ld	hl, _sword1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 10
+	push	hl
+	ld	hl, 34
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_sword2Flipped), hl
+	push	hl
+	ld	hl, _sword2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 32
+	push	hl
+	dec	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy1_1Flipped), hl
+	push	hl
+	ld	hl, _enemy1_1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 32
+	push	hl
+	dec	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy1_2Flipped), hl
+	push	hl
+	ld	hl, _enemy1_2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 32
+	push	hl
+	ld	hl, 27
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy2_1Flipped), hl
+	push	hl
+	ld	hl, _enemy2_1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 32
+	push	hl
+	ld	hl, 27
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy2_2Flipped), hl
+	push	hl
+	ld	hl, _enemy2_2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 31
+	push	hl
+	dec	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy3_1Flipped), hl
+	push	hl
+	ld	hl, _enemy3_1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 31
+	push	hl
+	dec	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy3_2Flipped), hl
+	push	hl
+	ld	hl, _enemy3_2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 31
+	push	hl
+	dec	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy4_1Flipped), hl
+	push	hl
+	ld	hl, _enemy4_1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 31
+	push	hl
+	dec	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy4_2Flipped), hl
+	push	hl
+	ld	hl, _enemy4_2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 29
+	push	hl
+	ld	hl, 26
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy5_1Flipped), hl
+	push	hl
+	ld	hl, _enemy5_1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 29
+	push	hl
+	ld	hl, 26
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy5_2Flipped), hl
+	push	hl
+	ld	hl, _enemy5_2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 32
+	push	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy6_1Flipped), hl
+	push	hl
+	ld	hl, _enemy6_1_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 32
+	push	hl
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	(_enemy6_2Flipped), hl
+	push	hl
+	ld	hl, _enemy6_2_data
+	push	hl
+	call	_gfx_FlipSpriteY
+	pop	hl
+	pop	hl
+	ld	iy, _tilemapM
+	ld	(_tilemap), iy
+	ld	hl, _tileset_tiles_data
+	ld	(_tilemap+3), hl
+	ld	a, 4
+	ld	(_tilemap+10), a
+	ld	b, a
+	ld	(_tilemap+11), a
+	ld	a, 16
+	ld	(_tilemap+6), a
+	ld	c, a
+	ld	(_tilemap+7), a
+	dec	a
+	ld	(_tilemap+8), a
+	ld	a, 20
+	ld	(_tilemap+9), a
+	ld	a, 60
+	ld	(_tilemap+12), a
+	ld	a, 120
+	ld	(_tilemap+13), a
+	ld	a, 0
+	ld	(_tilemap+14), a
+	ld	hl, 0
+	ld	(_tilemap+15), hl
+	ld	(_hudTilemap), iy
+	ld	de, _tileset_tiles_data
+	ld	(_hudTilemap+3), de
+	ld	a, b
+	ld	(_hudTilemap+10), a
+	ld	(_hudTilemap+11), a
+	ld	a, c
+	ld	(_hudTilemap+6), a
+	ld	(_hudTilemap+7), a
+	ld	a, 2
+	ld	(_hudTilemap+8), a
+	ld	a, 20
+	ld	(_hudTilemap+9), a
+	ld	a, 60
+	ld	(_hudTilemap+12), a
+	ld	a, 120
+	ld	(_hudTilemap+13), a
+	ld	a, -48
+	ld	(_hudTilemap+14), a
+	ld	(_hudTilemap+15), hl
+	call	_gfx_Begin
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 512
+	push	hl
+	ld	hl, _global_palette
+	push	hl
+	call	_gfx_SetPalette
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_SetTransparentColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetDraw
+	pop	hl
+	ld	hl, 8
+	push	hl
+	call	_gfx_SetMonospaceFont
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 60
+	push	hl
+	ld	hl, 100
+	push	hl
+	ld	hl, _techcrafter_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 232
+	push	hl
+	ld	hl, 296
+	push	hl
+	ld	hl, _version
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	iy, -851900
+	ld	hl, (iy)
+	ld	a, (iy + 3)
+	push	hl
+	call	_srand
+	pop	hl
+	call	_kb_Scan
+	ld	hl, -720866
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	ld	(_key), a
+	ld	hl, 500
+	push	hl
+	call	_delay
+	pop	hl
+	call	_ti_CloseAll
+	ld	hl, (_appvarName)
+	ld	de, L_.str.6
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	l, a
+	pop	de
+	pop	de
+	ld	(_myAppVar), a
+	or	a, a
+	ld	de, 1500
+	jq	nz, BB14_5
+	push	de
+	call	_delay
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	ld	hl, L_.str.7
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 24
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.8
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 32
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.9
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 40
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.10
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 48
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.11
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 56
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.12
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 64
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.13
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 72
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.14
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 80
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.15
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 88
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.16
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 96
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.17
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 104
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.18
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 112
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.19
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 120
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.20
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 128
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.21
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 136
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.22
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 144
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.23
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 152
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.24
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 160
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.25
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 168
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.26
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 176
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.27
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 184
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.28
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 205
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.29
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 215
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.30
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+BB14_2:
+	call	_os_GetCSC
+	ld	(_key), a
+	cp	a, 15
+	jq	z, BB14_171
+	cp	a, 54
+	jq	nz, BB14_2
+	ld	hl, (_appvarName)
+	ld	de, L_.str.31
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	ld	(ix + -3), de
+	pop	hl
+	pop	hl
+	ld	(_myAppVar), a
+	ld	hl, 7
+	push	hl
+	ld	hl, L_.str.32
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_memcpy
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix + -3)
+	push	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, 373
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	jq	BB14_10
+BB14_5:
+	push	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, 373
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_ti_Read
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	a, (_data+15)
+	cp	a, 1
+	jq	nz, BB14_9
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 320
+	push	hl
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 96
+	push	hl
+	ld	hl, 100
+	push	hl
+	ld	hl, _logo_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	a, (_data+16)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	(_testMode), hl
+	ld	de, (_data+17)
+	ld	(_stage), de
+	ld	de, (_data+21)
+	ld	(_score), de
+	ld	de, (_data+25)
+	ld	(_lifes), de
+	ld	de, (_data+29)
+	ld	(_firstXBlock), de
+	ld	de, (_data+33)
+	ld	(_firstYBlock), de
+	ld	de, (_data+37)
+	ld	(_scrollX), de
+	ld	de, (_data+41)
+	ld	(_scrollY), de
+	ld	de, (_data+45)
+	ld	(_maxScrollX), de
+	ld	de, (_data+49)
+	ld	(_endLeft), de
+	ld	de, (_data+53)
+	ld	(_endRight), de
+	ld	de, (_data+57)
+	ld	(_endDown), de
+	ld	de, (_data+61)
+	ld	(_playerX), de
+	ld	de, (_data+65)
+	ld	(_playerY), de
+	ld	a, (_data+69)
+	ld	l, a
+	ld	(_playerDirection), hl
+	ld	a, (_data+70)
+	ld	l, a
+	ld	(_playerAnimation), hl
+	ld	a, (_data+71)
+	ld	l, a
+	ld	(_playerAnimationCount), hl
+	ld	a, (_data+72)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	(_playerGrounded), hl
+	ld	de, (_data+73)
+	ld	(_playerJump), de
+	ld	de, (_data+77)
+	ld	(_timeStopActive), de
+	ld	de, (_data+81)
+	ld	(_invincibilityActive), de
+	ld	a, (_data+85)
+	ld	l, a
+	ld	(_dashBootsActive), hl
+	ld	a, (_data+86)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	(_sword), hl
+	ld	de, (_data+87)
+	ld	(_shopTimer), de
+	ld	a, (_data+91)
+	ld	l, a
+	ld	(_shopActive), hl
+	ld	a, (_data+92)
+	ld	l, a
+	ld	(_playerAnimationSpeed), hl
+	ld	a, (_data+93)
+	ld	l, a
+	ld	(_playerWalkSpeed), hl
+	ld	a, (_data+94)
+	ld	l, a
+	ld	(_playerJumpHeight), hl
+	ld	a, (_data+95)
+	ld	l, a
+	ld	(_playerJumpSpeed), hl
+	ld	a, (_data+96)
+	ld	l, a
+	ld	(_playerFallSpeed), hl
+	ld	a, (_data+97)
+	ld	l, a
+	ld	(_universal2AnimationSpeed), hl
+	ld	a, (_data+98)
+	ld	l, a
+	ld	(_enemy1Speed), hl
+	ld	a, (_data+99)
+	ld	l, a
+	ld	(_enemy2Speed), hl
+	ld	a, (_data+100)
+	ld	l, a
+	ld	(_enemy3Speed), hl
+	ld	a, (_data+101)
+	ld	l, a
+	ld	(_damageMultiplier), hl
+	ld	a, (_data+102)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	(_enemySpawnTime), hl
+	or	a, a
+	sbc	hl, hl
+	ld	(ix + -3), hl
+	ld	de, 128
+	ld	iy, 500
+BB14_7:
+	ld	hl, (ix + -3)
+	ld	bc, 90
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_11
+	ld	de, (ix + -3)
+	ld	iy, _data+283
+	add	iy, de
+	ld	(ix + -6), iy
+	ld	bc, -180
+	add	iy, bc
+	ld	bc, (iy)
+	ld	hl, _enemy
+	add	hl, de
+	ld	(hl), bc
+	ld	iy, (ix + -6)
+	ld	bc, (iy + -90)
+	ld	hl, _enemyX
+	add	hl, de
+	ld	(hl), bc
+	ld	bc, (iy)
+	ld	iy, 500
+	ld	hl, _enemyY
+	add	hl, de
+	ld	(hl), bc
+	ld	de, 3
+	ld	hl, (ix + -3)
+	add	hl, de
+	ld	(ix + -3), hl
+	ld	de, 128
+	jq	BB14_7
+BB14_9:
+	ld	hl, 1500
+	push	hl
+	call	_delay
+BB14_10:
+	pop	hl
+	jq	BB14_13
+BB14_11:
+	ld	hl, 30
+	ld	(_i), hl
+	ld	(_enemyPositioner), de
+	push	iy
+	call	_delay
+	pop	hl
+	jq	BB14_45
+BB14_13:
+	ld	bc, 0
+	ld	(_selection), bc
+	ld	de, 1
+	ld	(_selecting), de
+	push	de
+	pop	hl
+	ld	iy, _tilemap
+BB14_14:
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_33
+	push	bc
+	ld	hl, 320
+	push	hl
+	push	iy
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, 100
+	push	hl
+	ld	hl, _logo_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_testMode)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB14_17
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 10
+	push	hl
+	push	hl
+	ld	hl, L_.str.1
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+BB14_17:
+	call	_os_GetCSC
+	ld	(_key), a
+	cp	a, 54
+	jq	nz, BB14_19
+	or	a, a
+	sbc	hl, hl
+	ld	(_selecting), hl
+	ld	de, (_selection)
+	jq	BB14_28
+BB14_19:
+	ld	de, (_selection)
+	cp	a, 4
+	jq	nz, BB14_23
+	push	de
+	pop	hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_23
+	dec	de
+	jq	BB14_22
+BB14_23:
+	cp	a, 1
+	jq	nz, BB14_28
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_28
+	inc	de
+BB14_22:
+	ld	(_selection), de
+BB14_28:
+	ex	de, hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	ld	hl, _playButton1_data
+	jq	z, BB14_30
+	ld	hl, _playButton0_data
+BB14_30:
+	ld	de, 138
+	push	de
+	ld	de, 128
+	push	de
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_selection)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	ld	hl, _quitButton1_data
+	jq	z, BB14_32
+	ld	hl, _quitButton0_data
+BB14_32:
+	ld	de, 180
+	push	de
+	ld	de, 128
+	push	de
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	hl, (_selecting)
+	ld	bc, 0
+	ld	de, 1
+	ld	iy, _tilemap
+	jq	BB14_14
+BB14_33:
+	ld	hl, (_selection)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_37
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	z, BB14_171
+	ld	hl, (_appvarName)
+	ld	de, L_.str.31
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	ld	(ix + -3), de
+	pop	hl
+	pop	hl
+	ld	(_myAppVar), a
+	ld	hl, 7
+	push	hl
+	ld	hl, L_.str.32
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_memcpy
+	pop	hl
+	pop	hl
+	pop	hl
+	xor	a, a
+	ld	(_data+15), a
+	ld	hl, (ix + -3)
+	push	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, 373
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 5
+	push	hl
+	call	_gfx_FillScreen
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 5
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	ld	hl, L_.str.56
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 10
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, L_.str.55
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+BB14_36:
+	call	_os_GetCSC
+	cp	a, 54
+	jq	nz, BB14_36
+	jq	BB14_13
+BB14_37:
+	ld	(_stage), de
+	ld	(_score), bc
+	ld	hl, 200
+	ld	(_lifes), hl
+	ld	hl, 2
+	ld	(_firstXBlock), hl
+	ld	(_firstYBlock), bc
+	ld	(_scrollX), bc
+	ld	(_scrollY), bc
+	ld	hl, 320
+	ld	(_maxScrollX), hl
+	ld	hl, 96
+	ld	(_endLeft), hl
+	ld	hl, 527
+	ld	(_endRight), hl
+	ld	hl, 153
+	push	hl
+	pop	iy
+	ld	(_endDown), iy
+	ld	hl, 160
+	ld	(_playerX), hl
+	ld	(_playerY), iy
+	ld	(_playerDirection), bc
+	ld	(_playerAnimation), de
+	ld	(_playerAnimationCount), de
+	ld	(_playerGrounded), de
+	ld	(_playerJump), bc
+	ld	(_dashBootsActive), bc
+	ld	(_sword), de
+	ld	(_universal2Animation), de
+	ld	(_universal2AnimationCount), de
+	ld	hl, 3
+	ld	(_playerAnimationSpeed), hl
+	ld	hl, 5
+	ld	(_playerWalkSpeed), hl
+	ld	hl, 7
+	push	hl
+	pop	iy
+	ld	(_playerJumpHeight), iy
+	inc	hl
+	ld	(_playerJumpSpeed), hl
+	ld	(_playerFallSpeed), iy
+	ld	hl, 5
+	ld	(_universal2AnimationSpeed), hl
+	ld	hl, 2
+	ld	(_enemy1Speed), hl
+	ld	hl, 4
+	ld	(_enemy2Speed), hl
+	ld	hl, 6
+	ld	(_enemy3Speed), hl
+	ld	(_damageMultiplier), de
+	ld	hl, 600
+	ld	(_shopTimer), hl
+	ld	(_shopActive), bc
+	ld	(_invincibilityActive), bc
+	ld	(_timeStopActive), bc
+	ld	hl, 15
+	ld	(_enemySpawnTime), hl
+	push	bc
+	pop	iy
+BB14_38:
+	lea	hl, iy + 0
+	ld	de, 90
+	or	a, a
+	sbc	hl, de
+	jq	z, BB14_40
+	lea	de, iy + 0
+	ld	hl, _enemy
+	add	hl, de
+	ld	(hl), bc
+	ld	hl, _enemyX
+	add	hl, de
+	ld	(hl), bc
+	ld	hl, _enemyY
+	add	hl, de
+	ld	(hl), bc
+	ld	de, 3
+	add	iy, de
+	jq	BB14_38
+BB14_40:
+	ld	hl, 128
+	ld	(_enemyPositioner), hl
+	ld	(_currentExplosion), bc
+	ld	de, 24
+	push	bc
+	pop	iy
+BB14_41:
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	jq	z, BB14_43
+	lea	bc, iy + 0
+	ld	hl, _explosionX
+	add	hl, bc
+	ld	de, 0
+	ld	(hl), de
+	ld	hl, _explosionY
+	add	hl, bc
+	ld	(hl), de
+	ld	hl, _explosionAnimation
+	add	hl, bc
+	ld	(hl), de
+	ld	de, 3
+	add	iy, de
+	ld	de, 24
+	jq	BB14_41
+BB14_43:
+	ld	hl, 8
+	ld	(_i), hl
+BB14_45:
+	call	_countIn
+BB14_46:
+	ld	hl, (_lifes)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB14_163
+	ld	hl, (_firstXBlock)
+	ld	bc, 320
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	de, (_scrollX)
+	add	iy, de
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, -720866
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	ld	(_key), a
+	ld.sis	bc, 255
+	call	__sand
+	ld	a, l
+	bit	1, a
+	ld	de, 1
+	ld	bc, 0
+	jq	nz, BB14_49
+	ld	a, l
+	bit	2, a
+	push	bc
+	pop	de
+	jq	z, BB14_50
+BB14_49:
+	ld	(_playerDirection), de
+BB14_50:
+	ld	hl, -720878
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	cp	a, 32
+	jq	nz, BB14_53
+	ld	hl, (_playerGrounded)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB14_53
+	ld	hl, (_playerJumpHeight)
+	ld	(_playerJump), hl
+BB14_53:
+	ld	hl, -720878
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	cp	a, 32
+	jq	z, BB14_55
+	ld	(_playerJump), bc
+BB14_55:
+	ld	hl, -720876
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	cp	a, -128
+	jq	nz, BB14_61
+	ld	hl, (_dashBootsActive)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB14_61
+	ld	hl, 16
+	push	hl
+	ld	hl, 143
+	push	hl
+	ld	hl, _dashBoots_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_playerDirection)
+	ld	de, (_playerWalkSpeed)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_59
+	ex	de, hl
+	ld	bc, 2
+	call	__idivs
+	push	hl
+	pop	de
+	ld	hl, (_playerX)
+	jq	BB14_60
+BB14_59:
+	ex	de, hl
+	ld	bc, -2
+	call	__idivs
+	ld	de, (_playerX)
+BB14_60:
+	add	hl, de
+	ld	(_playerX), hl
+BB14_61:
+	call	_os_GetCSC
+	ld	(_key), a
+	cp	a, 15
+	jq	z, BB14_78
+	ld	de, (_testMode)
+	cp	a, 55
+	ld	bc, 1
+	jq	nz, BB14_64
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_82
+BB14_64:
+	cp	a, 56
+	jq	nz, BB14_69
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_69
+	ld	hl, (_score)
+	ld	de, 1000
+	add	hl, de
+	ld	(_score), hl
+	ld	iy, (_lifes)
+	lea	hl, iy + 0
+	ld	de, 190
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB14_68
+	ld	iy, 190
+BB14_68:
+	ld	de, 10
+	add	iy, de
+	ld	(_lifes), iy
+BB14_69:
+	call	_universalAnimationHandler
+	call	_shopHandler
+	ld	de, 1
+	ld	hl, (_shopActive)
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB14_73
+	ld	hl, (_playerGrounded)
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB14_73
+	ld	hl, (_scrollX)
+	ld	bc, 161
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_73
+	ld	hl, (_playerX)
+	ld	bc, -470
+	add	hl, bc
+	ld	bc, 21
+	or	a, a
+	sbc	hl, bc
+	jq	c, BB14_82
+BB14_73:
+	ld	hl, (_invincibilityActive)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB14_75
+	ld	hl, 16
+	push	hl
+	push	hl
+	ld	hl, _invincibilityPotion_data
+	push	hl
+	call	_gfx_TransparentSprite
+	ld	de, 1
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_invincibilityActive)
+	dec	hl
+	ld	(_invincibilityActive), hl
+BB14_75:
+	ld	hl, (_timeStopActive)
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	m, BB14_77
+	ld	hl, 16
+	push	hl
+	ld	hl, 270
+	push	hl
+	ld	hl, _timeStop_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_timeStopActive)
+	dec	hl
+	ld	(_timeStopActive), hl
+BB14_77:
+	call	_movePlayer
+	call	_explosionHandler
+	call	_enemyHandler
+	call	_drawHud
+	call	_drawPlayer
+	call	_gfx_SwapDraw
+	call	_stageChecker
+	jq	BB14_46
+BB14_78:
+	ld	hl, (_firstXBlock)
+	ld	de, 320
+	push	de
+	pop	bc
+	call	__imulu
+	push	hl
+	pop	iy
+	ld	de, (_scrollX)
+	add	iy, de
+	ld	hl, (_firstYBlock)
+	ld	bc, 240
+	call	__imulu
+	push	hl
+	push	iy
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	ld	hl, 3
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 125
+	push	hl
+	ld	hl, 320
+	push	hl
+	ld	hl, 60
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 3
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 80
+	push	hl
+	push	hl
+	ld	hl, L_.str.51
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 115
+	push	hl
+	ld	hl, 55
+	push	hl
+	ld	hl, L_.str.52
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 135
+	push	hl
+	ld	hl, 48
+	push	hl
+	ld	hl, L_.str.53
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 155
+	push	hl
+	ld	hl, 62
+	push	hl
+	ld	hl, L_.str.54
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+BB14_79:
+	call	_os_GetCSC
+	ld	(_key), a
+	cp	a, 15
+	jq	z, BB14_45
+	cp	a, 54
+	jq	z, BB14_167
+	cp	a, 56
+	jq	nz, BB14_79
+	jq	BB14_163
+BB14_82:
+	ld	hl, 600
+	ld	(_shopTimer), hl
+	or	a, a
+	sbc	hl, hl
+	ld	(_shopActive), hl
+	call	_random
+	ld	(_a), hl
+	or	a, a
+	sbc	hl, hl
+	ld	(_selection), hl
+	inc	hl
+	ld	(_selecting), hl
+BB14_83:
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_45
+	ld	hl, 240
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_drawHud
+	ld	hl, 1
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 6
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 42
+	push	hl
+	ld	hl, 44
+	push	hl
+	ld	hl, L_.str.33
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	de, (_a)
+	push	de
+	pop	hl
+	ld	bc, -5000000
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB14_86
+	ld	hl, 1
+	ld	(_shop), hl
+	ld	hl, 58
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _watermellon_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 62
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.34
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 70
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.35
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 4
+	ld	(_shop+3), hl
+	ld	hl, 90
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _bigHealPotion_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 94
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.36
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 102
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.37
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 7
+	ld	(_shop+6), hl
+	ld	hl, 122
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _dashBoots_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, L_.str.38
+	ld	de, L_.str.39
+BB14_92:
+	ld	(ix + -3), de
+	ld	de, 98
+	jq	BB14_93
+BB14_86:
+	push	de
+	pop	hl
+	ld	bc, 0
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB14_89
+	ld	hl, 2
+	ld	(_shop), hl
+	ld	hl, 50
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _meat_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 62
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.40
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 70
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.41
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 4
+	ld	(_shop+3), hl
+	ld	hl, 88
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _bigHealPotion_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 94
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.36
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 102
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.37
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 6
+	ld	(_shop+6), hl
+	ld	hl, 122
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _invincibilityPotion_data
+	push	hl
+	call	_gfx_TransparentSprite
+	ld	de, 98
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, L_.str.42
+	ld	bc, L_.str.43
+	jq	BB14_88
+BB14_89:
+	ex	de, hl
+	ld	de, 5000000
+	or	a, a
+	sbc	hl, de
+	call	__setflag
+	jq	p, BB14_91
+	ld	hl, 3
+	ld	(_shop), hl
+	ld	hl, 58
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _smallHealPotion_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 62
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.44
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 70
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.45
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 5
+	ld	(_shop+3), hl
+	ld	hl, 90
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _timeStop_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 94
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.46
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 102
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.47
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	ld	(_shop+6), hl
+	ld	hl, 114
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _meat_data
+	push	hl
+	call	_gfx_TransparentSprite
+	ld	de, 98
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, L_.str.40
+	ld	bc, L_.str.41
+BB14_88:
+	ld	(ix + -3), bc
+BB14_93:
+	ld	bc, 126
+	push	bc
+	push	de
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 134
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, (ix + -3)
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 156
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.50
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_os_GetCSC
+	ld	(_key), a
+	ld	de, (_selection)
+	cp	a, 54
+	jq	nz, BB14_96
+	push	de
+	pop	hl
+	ld	bc, 3
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_96
+	or	a, a
+	sbc	hl, hl
+	ld	(_selecting), hl
+	ld	hl, 160
+	jq	BB14_117
+BB14_96:
+	cp	a, 4
+	jq	nz, BB14_100
+	push	de
+	pop	hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_100
+	dec	de
+	jq	BB14_99
+BB14_100:
+	cp	a, 1
+	jq	nz, BB14_103
+	push	de
+	pop	hl
+	ld	bc, 3
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_103
+	inc	de
+BB14_99:
+	ld	(_selection), de
+	jq	BB14_115
+BB14_103:
+	cp	a, 54
+	jq	nz, BB14_115
+	push	de
+	pop	hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_108
+	ld	iy, (_shop)
+	jq	BB14_106
+BB14_91:
+	ld	hl, 1
+	ld	(_shop), hl
+	ld	hl, 58
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _watermellon_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 62
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.34
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 70
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.35
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 3
+	ld	(_shop+3), hl
+	ld	hl, 90
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _smallHealPotion_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 94
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.44
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 102
+	push	hl
+	ld	hl, 98
+	push	hl
+	ld	hl, L_.str.45
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 8
+	ld	(_shop+6), hl
+	ld	hl, 122
+	push	hl
+	ld	hl, 56
+	push	hl
+	ld	hl, _swordUpgrade_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, L_.str.48
+	ld	de, L_.str.49
+	jq	BB14_92
+BB14_108:
+	push	de
+	pop	hl
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_110
+	ld	iy, (_shop+3)
+	jq	BB14_106
+BB14_110:
+	push	de
+	pop	hl
+	ld	bc, 2
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_112
+	ld	iy, (_shop+6)
+BB14_106:
+	ld	(_i), iy
+BB14_113:
+	lea	hl, iy + 0
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, BB14_115
+	ld	hl, (_score)
+	ld	(ix + -3), hl
+	ld	hl, (_lifes)
+	ld	(ix + -6), hl
+	lea	hl, iy + 0
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_128
+	ld	hl, (ix + -3)
+	ld	bc, 2000
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_128
+	ld	hl, (ix + -6)
+	ld	bc, 200
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB14_128
+	ld	bc, -2000
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	iy, (ix + -6)
+	lea	hl, iy + 0
+	ld	bc, 175
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_124
+	ld	iy, 175
+BB14_124:
+	ld	bc, 25
+	jq	BB14_125
+BB14_128:
+	lea	hl, iy + 0
+	ld	bc, 2
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_134
+	ld	hl, (ix + -3)
+	ld	bc, 4500
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_134
+	ld	hl, (ix + -6)
+	ld	bc, 200
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB14_134
+	ld	bc, -4500
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	iy, (ix + -6)
+	lea	hl, iy + 0
+	ld	bc, 150
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_133
+	ld	iy, 150
+BB14_133:
+	ld	bc, 50
+	jq	BB14_125
+BB14_134:
+	lea	hl, iy + 0
+	ld	bc, 3
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_140
+	ld	hl, (ix + -3)
+	ld	bc, 5000
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_140
+	ld	hl, (ix + -6)
+	ld	bc, 200
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB14_140
+	ld	bc, -5000
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	iy, (ix + -6)
+	lea	hl, iy + 0
+	ld	bc, 125
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_139
+	ld	iy, 125
+BB14_139:
+	ld	bc, 75
+	jq	BB14_125
+BB14_140:
+	lea	hl, iy + 0
+	ld	bc, 4
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_146
+	ld	hl, (ix + -3)
+	ld	bc, 9250
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_146
+	ld	hl, (ix + -6)
+	ld	bc, 200
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	p, BB14_146
+	ld	bc, -9250
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	iy, (ix + -6)
+	lea	hl, iy + 0
+	ld	bc, 50
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_145
+	ld	iy, 50
+BB14_145:
+	ld	bc, 150
+BB14_125:
+	add	iy, bc
+	ld	(_lifes), iy
+	jq	BB14_126
+BB14_146:
+	lea	hl, iy + 0
+	ld	bc, 5
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_149
+	ld	hl, (ix + -3)
+	ld	bc, 3000
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_149
+	ld	bc, -3000
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	hl, 150
+	ld	(_timeStopActive), hl
+	jq	BB14_126
+BB14_149:
+	lea	hl, iy + 0
+	ld	bc, 6
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_152
+	ld	hl, (ix + -3)
+	ld	bc, 4250
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_152
+	ld	bc, -4250
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	hl, 250
+	ld	(_invincibilityActive), hl
+	jq	BB14_126
+BB14_152:
+	lea	hl, iy + 0
+	ld	bc, 7
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_156
+	ld	hl, (_dashBootsActive)
+	ld	(ix + -6), hl
+	ld	hl, (ix + -3)
+	ld	bc, 20000
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_156
+	ld	hl, (ix + -6)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_156
+	ld	bc, -20000
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	hl, 1
+	ld	(_dashBootsActive), hl
+	dec	hl
+	jq	BB14_127
+BB14_156:
+	lea	hl, iy + 0
+	ld	bc, 8
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_115
+	ld	iy, (_sword)
+	ld	hl, (ix + -3)
+	ld	bc, 16500
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_115
+	lea	hl, iy + 0
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jq	nz, BB14_115
+	ld	bc, -16500
+	ld	hl, (ix + -3)
+	add	hl, bc
+	ld	(_score), hl
+	ld	hl, 2
+	ld	(_sword), hl
+BB14_126:
+	or	a, a
+	sbc	hl, hl
+BB14_127:
+	ld	(_selecting), hl
+BB14_115:
+	push	de
+	pop	hl
+	ld	bc, 4
+	or	a, a
+	sbc	hl, bc
+	jq	nc, BB14_118
+	ex	de, hl
+	ld	c, 5
+	call	__ishl
+	ld	de, 64
+	add	hl, de
+BB14_117:
+	push	hl
+	ld	hl, 42
+	push	hl
+	ld	hl, _shopSelector_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+BB14_118:
+	call	_gfx_SwapDraw
+	ld	hl, (_selecting)
+	jq	BB14_83
+BB14_112:
+	ld	iy, (_i)
+	jq	BB14_113
+BB14_163:
+	ld	hl, (_appvarName)
+	ld	de, L_.str.31
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	ld	(ix + -3), de
+	pop	hl
+	pop	hl
+	ld	(_myAppVar), a
+	ld	hl, 7
+	push	hl
+	ld	hl, L_.str.32
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_memcpy
+	pop	hl
+	pop	hl
+	pop	hl
+	xor	a, a
+	ld	(_data+15), a
+	ld	hl, (ix + -3)
+	push	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, 373
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 1280
+	push	hl
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 132
+	push	hl
+	ld	hl, 104
+	push	hl
+	ld	hl, _playerWalking1_data
+	push	hl
+	call	_gfx_TransparentSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	ld	hl, 144
+	push	hl
+	ld	hl, 130
+	push	hl
+	call	_gfx_SetTextXY
+	pop	hl
+	pop	hl
+	ld	hl, (_score)
+	ld	de, 6
+	push	de
+	push	hl
+	call	_gfx_PrintInt
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 220
+	push	hl
+	ld	hl, 16
+	push	hl
+	ld	hl, L_.str.55
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (_testMode)
+	ld	de, 1
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB14_165
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 3
+	push	hl
+	call	_gfx_SetTextBGColor
+	pop	hl
+	ld	hl, 2
+	push	hl
+	push	hl
+	call	_gfx_SetTextScale
+	pop	hl
+	pop	hl
+	ld	hl, 10
+	push	hl
+	push	hl
+	ld	hl, L_.str.1
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+BB14_165:
+	call	_gfx_SwapDraw
+BB14_166:
+	call	_os_GetCSC
+	cp	a, 54
+	jq	nz, BB14_166
+	jq	BB14_13
+BB14_167:
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	push	hl
+	ld	hl, _tilemap
+	push	hl
+	call	_gfx_Tilemap
+	pop	hl
+	pop	hl
+	pop	hl
+	call	_gfx_SwapDraw
+	ld	hl, (_appvarName)
+	ld	de, L_.str.31
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	pop	hl
+	pop	hl
+	ld	(ix + -6), de
+	ld	(_myAppVar), a
+	ld	hl, 7
+	push	hl
+	ld	hl, L_.str.32
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_memcpy
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	a, 1
+	ld	(_data+15), a
+	ld	a, (_testMode)
+	ld	(_data+16), a
+	ld	de, (_stage)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+17), de
+	ld	a, l
+	ld	(_data+20), a
+	ld	de, (_score)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+21), de
+	ld	a, l
+	ld	(_data+24), a
+	ld	de, (_lifes)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+25), de
+	ld	a, l
+	ld	(_data+28), a
+	ld	de, (_firstXBlock)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+29), de
+	ld	a, l
+	ld	(_data+32), a
+	ld	de, (_firstYBlock)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+33), de
+	ld	a, l
+	ld	(_data+36), a
+	ld	de, (_scrollX)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+37), de
+	ld	a, l
+	ld	(_data+40), a
+	ld	de, (_scrollY)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+41), de
+	ld	a, l
+	ld	(_data+44), a
+	ld	de, (_maxScrollX)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+45), de
+	ld	a, l
+	ld	(_data+48), a
+	ld	de, (_endLeft)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+49), de
+	ld	a, l
+	ld	(_data+52), a
+	ld	de, (_endRight)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+53), de
+	ld	a, l
+	ld	(_data+56), a
+	ld	de, (_endDown)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+57), de
+	ld	a, l
+	ld	(_data+60), a
+	ld	de, (_playerX)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+61), de
+	ld	a, l
+	ld	(_data+64), a
+	ld	de, (_playerY)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+65), de
+	ld	a, l
+	ld	(_data+68), a
+	ld	a, (_playerDirection)
+	ld	(_data+69), a
+	ld	a, (_playerAnimation)
+	ld	(_data+70), a
+	ld	a, (_playerAnimationCount)
+	ld	(_data+71), a
+	ld	a, (_playerGrounded)
+	ld	(_data+72), a
+	ld	de, (_playerJump)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+73), de
+	ld	a, l
+	ld	(_data+76), a
+	ld	de, (_timeStopActive)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+77), de
+	ld	a, l
+	ld	(_data+80), a
+	ld	de, (_invincibilityActive)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+81), de
+	ld	a, l
+	ld	(_data+84), a
+	ld	a, (_dashBootsActive)
+	ld	(_data+85), a
+	ld	a, (_sword)
+	ld	(_data+86), a
+	ld	de, (_shopTimer)
+	push	de
+	pop	hl
+	push	de
+	pop	iy
+	add	iy, iy
+	sbc	hl, hl
+	ld	(_data+87), de
+	ld	a, l
+	ld	(_data+90), a
+	ld	a, (_shopActive)
+	ld	(_data+91), a
+	ld	a, (_playerAnimationSpeed)
+	ld	(_data+92), a
+	ld	a, (_playerWalkSpeed)
+	ld	(_data+93), a
+	ld	a, (_playerJumpHeight)
+	ld	(_data+94), a
+	ld	a, (_playerJumpSpeed)
+	ld	(_data+95), a
+	ld	a, (_playerFallSpeed)
+	ld	(_data+96), a
+	ld	a, (_universal2AnimationSpeed)
+	ld	(_data+97), a
+	ld	a, (_enemy1Speed)
+	ld	(_data+98), a
+	ld	a, (_enemy2Speed)
+	ld	(_data+99), a
+	ld	a, (_enemy3Speed)
+	ld	(_data+100), a
+	ld	a, (_damageMultiplier)
+	ld	(_data+101), a
+	ld	a, (_enemySpawnTime)
+	ld	(_data+102), a
+	ld	iy, 0
+BB14_168:
+	lea	hl, iy + 0
+	ld	de, 90
+	or	a, a
+	sbc	hl, de
+	jq	z, BB14_170
+	lea	de, iy + 0
+	ld	hl, _enemy
+	add	hl, de
+	ld	hl, (hl)
+	ld	(ix + -9), hl
+	ld	bc, _data+283
+	push	bc
+	pop	hl
+	add	hl, de
+	ld	(ix + -3), hl
+	lea	hl, iy + 0
+	ld	iy, (ix + -3)
+	ld	bc, -180
+	add	iy, bc
+	ld	bc, (ix + -9)
+	ld	(iy), bc
+	push	hl
+	pop	bc
+	ld	hl, _enemyX
+	add	hl, de
+	ld	hl, (hl)
+	ld	iy, (ix + -3)
+	ld	(iy + -90), hl
+	ld	hl, _enemyY
+	add	hl, de
+	ld	hl, (hl)
+	ld	iy, (ix + -3)
+	ld	(iy), hl
+	ld	de, 3
+	push	bc
+	pop	iy
+	add	iy, de
+	jq	BB14_168
+BB14_170:
+	ld	hl, 30
+	ld	(_i), hl
+	ld	hl, (ix + -6)
+	push	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, 373
+	push	hl
+	ld	hl, _data
+	push	hl
+	call	_ti_Write
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+BB14_171:
+	call	_gfx_End
+	or	a, a
+	sbc	hl, hl
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.rodata,"a",@progbits
+	public	_version
+_version:
+	db	"1.0",000o
+
+	section	.rodata,"a",@progbits
+	public	_testModeAvailable
+_testModeAvailable:
+	dl	0
+
+	section	.rodata,"a",@progbits
+	public	_leftTweakX
+_leftTweakX:
+	dl	4
+
+	section	.rodata,"a",@progbits
+	public	_shopTime
+_shopTime:
+	dl	600
+
+	section	.rodata,"a",@progbits
+	public	_shopOutTime
+_shopOutTime:
+	dl	200
+
+	section	.rodata,"a",@progbits
+	public	_timeStopDuration
+_timeStopDuration:
+	dl	150
+
+	section	.rodata,"a",@progbits
+	public	_invincibilityDuration
+_invincibilityDuration:
+	dl	250
+
+	section	.rodata,"a",@progbits
+	public	_basicSwordHitbox
+_basicSwordHitbox:
+	dl	6
+
+	section	.rodata,"a",@progbits
+	public	_enemyBaseScore
+_enemyBaseScore:
+	dl	75
+
+	section	.rodata,"a",@progbits
+	public	_enemyXHitbox
+_enemyXHitbox:
+	dl	28
+
+	section	.rodata,"a",@progbits
+	public	_enemyYHitbox
+_enemyYHitbox:
+	dl	28
+
+	section	.rodata,"a",@progbits
+	public	_enemyYTolerance
+_enemyYTolerance:
+	dl	10
+
+	section	.rodata,"a",@progbits
+	private	L_.str
+L_.str:
+	db	"PXSAV",000o
+
+	section	.data,"aw",@progbits
+	public	_appvarName
+_appvarName:
+	dl	L_.str
+
+	section	.bss,"aw",@nobits
+	public	_playerDirection
+_playerDirection:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerX
+_playerX:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerWalkSpeed
+_playerWalkSpeed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_endRight
+_endRight:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerAnimation
+_playerAnimation:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerAnimationCount
+_playerAnimationCount:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_endLeft
+_endLeft:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerJump
+_playerJump:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerGrounded
+_playerGrounded:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerJumpSpeed
+_playerJumpSpeed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerY
+_playerY:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerFallSpeed
+_playerFallSpeed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_endDown
+_endDown:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_scrollX
+_scrollX:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_cacheX
+_cacheX:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_maxScrollX
+_maxScrollX:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_shopActive
+_shopActive:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_universal2Animation
+_universal2Animation:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_hudTilemap
+_hudTilemap:
+	rb	18
+
+	section	.bss,"aw",@nobits
+	public	_lifes
+_lifes:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_score
+_score:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_testMode
+_testMode:
+	rb	3
+
+	section	.rodata,"a",@progbits
+	private	L_.str.1
+L_.str.1:
+	db	"TEST MODE",000o
+
+	section	.bss,"aw",@nobits
+	public	_scrollY
+_scrollY:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_cacheY
+_cacheY:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_sword
+_sword:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerWalking1Flipped
+_playerWalking1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerWalking2Flipped
+_playerWalking2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerWalking3Flipped
+_playerWalking3Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerWalking4Flipped
+_playerWalking4Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_sword1Flipped
+_sword1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_sword2Flipped
+_sword2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_playerAnimationSpeed
+_playerAnimationSpeed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_tilemap
+_tilemap:
+	rb	18
+
+	section	.bss,"aw",@nobits
+	public	_firstXBlock
+_firstXBlock:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_firstYBlock
+_firstYBlock:
+	rb	3
+
+	section	.rodata,"a",@progbits
+	private	L_.str.2
+L_.str.2:
+	db	"3",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.3
+L_.str.3:
+	db	"2",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.4
+L_.str.4:
+	db	"1",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.5
+L_.str.5:
+	db	"GO!",000o
+
+	section	.bss,"aw",@nobits
+	public	_stage
+_stage:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_i
+_i:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy
+_enemy:
+	rb	90
+
+	section	.bss,"aw",@nobits
+	public	_enemyX
+_enemyX:
+	rb	90
+
+	section	.bss,"aw",@nobits
+	public	_enemyY
+_enemyY:
+	rb	90
+
+	section	.bss,"aw",@nobits
+	public	_explosionAnimation
+_explosionAnimation:
+	rb	24
+
+	section	.bss,"aw",@nobits
+	public	_playerJumpHeight
+_playerJumpHeight:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy1Speed
+_enemy1Speed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy2Speed
+_enemy2Speed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy3Speed
+_enemy3Speed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_universal2AnimationSpeed
+_universal2AnimationSpeed:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemySpawnTime
+_enemySpawnTime:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_a
+_a:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_universal2AnimationCount
+_universal2AnimationCount:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_shopTimer
+_shopTimer:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_explosionX
+_explosionX:
+	rb	24
+
+	section	.bss,"aw",@nobits
+	public	_explosionY
+_explosionY:
+	rb	24
+
+	section	.bss,"aw",@nobits
+	public	_enemyTimer
+_enemyTimer:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_damageMultiplier
+_damageMultiplier:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemyPositioner
+_enemyPositioner:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_timeStopActive
+_timeStopActive:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy1SpeedBackup
+_enemy1SpeedBackup:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy2SpeedBackup
+_enemy2SpeedBackup:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy3SpeedBackup
+_enemy3SpeedBackup:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy1_1Flipped
+_enemy1_1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy1_2Flipped
+_enemy1_2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy2_1Flipped
+_enemy2_1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy2_2Flipped
+_enemy2_2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy3_1Flipped
+_enemy3_1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy3_2Flipped
+_enemy3_2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy4_1Flipped
+_enemy4_1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy4_2Flipped
+_enemy4_2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy5_1Flipped
+_enemy5_1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy5_2Flipped
+_enemy5_2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy6_1Flipped
+_enemy6_1Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_enemy6_2Flipped
+_enemy6_2Flipped:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_currentExplosion
+_currentExplosion:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_invincibilityActive
+_invincibilityActive:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_key
+_key:
+	rb	1
+
+	section	.rodata,"a",@progbits
+	private	L_.str.6
+L_.str.6:
+	db	"r",000o
+
+	section	.bss,"aw",@nobits
+	public	_myAppVar
+_myAppVar:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_data
+_data:
+	rb	373
+
+	section	.rodata,"a",@progbits
+	private	L_.str.7
+L_.str.7:
+	db	"License terms",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.8
+L_.str.8:
+	db	"PROTO X - A fun arena fighting game.",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.9
+L_.str.9:
+	db	"Copyright (C) 2021  Techcrafter",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.10
+L_.str.10:
+	db	"This program is free software: you can",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.11
+L_.str.11:
+	db	"redistribute it and/or modify it under",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.12
+L_.str.12:
+	db	"the terms of the GNU General Public",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.13
+L_.str.13:
+	db	"License as published by the Free",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.14
+L_.str.14:
+	db	"Software Foundation, either version 3",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.15
+L_.str.15:
+	db	"the License, or (at your option) any",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.16
+L_.str.16:
+	db	"later version.",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.17
+L_.str.17:
+	db	"This program is distributed in the",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.18
+L_.str.18:
+	db	"hope that it will be useful, but",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.19
+L_.str.19:
+	db	"WITHOUT ANY WARRANTY; without even",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.20
+L_.str.20:
+	db	"the implied warranty of",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.21
+L_.str.21:
+	db	"MERCHANTABILITY or FITNESS FOR A",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.22
+L_.str.22:
+	db	"PARTICULAR PURPOSE.  See the GNU",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.23
+L_.str.23:
+	db	"General Public License for more",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.24
+L_.str.24:
+	db	"details.",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.25
+L_.str.25:
+	db	"You should have received a copy of the",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.26
+L_.str.26:
+	db	"GNU General Public License along with",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.27
+L_.str.27:
+	db	"this program.  If not, see",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.28
+L_.str.28:
+	db	"<https://www.gnu.org/licenses/>.",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.29
+L_.str.29:
+	db	"Press [2nd] to accept these terms.",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.30
+L_.str.30:
+	db	"Press [clear] to decline and quit.",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.31
+L_.str.31:
+	db	"w",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.32
+L_.str.32:
+	db	"PXSave",000o
+
+	section	.bss,"aw",@nobits
+	public	_selection
+_selection:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_selecting
+_selecting:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_dashBootsActive
+_dashBootsActive:
+	rb	3
+
+	section	.rodata,"a",@progbits
+	private	L_.str.33
+L_.str.33:
+	db	"You can only buy one of those!",000o
+
+	section	.bss,"aw",@nobits
+	public	_shop
+_shop:
+	rb	9
+
+	section	.rodata,"a",@progbits
+	private	L_.str.34
+L_.str.34:
+	db	"Watermellon (25hp)",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.35
+L_.str.35:
+	db	"2000 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.36
+L_.str.36:
+	db	"Big heal potion (150hp)",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.37
+L_.str.37:
+	db	"9250 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.38
+L_.str.38:
+	db	"Dash boots ([alpha])",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.39
+L_.str.39:
+	db	"20000 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.40
+L_.str.40:
+	db	"Meat (50hp)",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.41
+L_.str.41:
+	db	"4500 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.42
+L_.str.42:
+	db	"Invincibility potion",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.43
+L_.str.43:
+	db	"4250 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.44
+L_.str.44:
+	db	"Small heal potion (75hp)",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.45
+L_.str.45:
+	db	"5000 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.46
+L_.str.46:
+	db	"Time stop",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.47
+L_.str.47:
+	db	"3000 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.48
+L_.str.48:
+	db	"Sword upgrade",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.49
+L_.str.49:
+	db	"16500 points",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.50
+L_.str.50:
+	db	"Exit",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.51
+L_.str.51:
+	db	"Pause menu",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.52
+L_.str.52:
+	db	"Press [clear] to continue...",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.53
+L_.str.53:
+	db	"Press [2nd] to save and quit...",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.54
+L_.str.54:
+	db	"Press [del] to give up...",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.55
+L_.str.55:
+	db	"Press [2nd] to go to the main menu...",000o
+
+	section	.rodata,"a",@progbits
+	private	L_.str.56
+L_.str.56:
+	db	"An error has occurred!",000o
+
+	section	.bss,"aw",@nobits
+	public	_nameBuffer
+_nameBuffer:
+	rb	10
+
+	section	.rodata,"a",@progbits
+	private	L_switch.table.drawPlayer
+L_switch.table.drawPlayer:
+	dl	_playerWalking1Flipped
+	dl	_playerWalking2Flipped
+	dl	_playerWalking3Flipped
+	dl	_playerWalking4Flipped
+
+	section	.rodata,"a",@progbits
+	private	L_switch.table.nextStage
+L_switch.table.nextStage:
+	dl	2
+	dl	0
+	dl	2
+	dl	4
+
+	section	.rodata,"a",@progbits
+	private	L_switch.table.nextStage.57
+L_switch.table.nextStage.57:
+	dl	0
+	dl	2
+	dl	2
+	dl	2
+
+	section	.rodata,"a",@progbits
+	private	L_switch.table.nextStage.58
+L_switch.table.nextStage.58:
+	dl	96
+	dl	64
+	dl	48
+	dl	32
+
+	section	.rodata,"a",@progbits
+	private	L_switch.table.nextStage.59
+L_switch.table.nextStage.59:
+	dl	527
+	dl	513
+	dl	527
+	dl	591
+
+	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
+	extern	__Unwind_SjLj_Register
+	extern	_malloc
+	extern	_srand
+	extern	_enemy5_1_data
+	extern	_gfx_SetPalette
+	extern	_playButton1_data
+	extern	_memcpy
+	extern	_invincibilityPotion_data
+	extern	__idivs
+	extern	_explosion2_data
+	extern	_ti_Open
+	extern	__ltof
+	extern	_enemy1_1_data
+	extern	_delay
+	extern	_enemy5_2_data
+	extern	_sword1_data
+	extern	_enemy6_1_data
+	extern	_gfx_SetTransparentColor
+	extern	_global_palette
+	extern	_explosion3_data
+	extern	_shopSelector_data
+	extern	_bigHealPotion_data
+	extern	_meat_data
+	extern	_ti_Write
+	extern	_swordUpgrade_data
+	extern	_enemy1_2_data
+	extern	_dashBoots_data
+	extern	__fmul
+	extern	_smallHealPotion_data
+	extern	_gfx_FillScreen
+	extern	_enemy2_1_data
+	extern	__imulu
+	extern	_sword2_data
+	extern	_enemy6_2_data
+	extern	_explosion4_data
+	extern	_timeStop_data
+	extern	_gfx_End
+	extern	__frameset0
+	extern	_gfx_SetTextXY
+	extern	_gfx_Tilemap
+	extern	_random
+	extern	_playerWalking1_data
+	extern	_techcrafter_data
+	extern	_gfx_SetTextFGColor
+	extern	_gfx_Begin
+	extern	_enemy2_2_data
+	extern	_gfx_SetMonospaceFont
+	extern	__sand
+	extern	_logo_data
+	extern	__ishl
+	extern	__ftol
+	extern	_ti_Read
+	extern	_enemy3_1_data
+	extern	_gfx_PrintInt
+	extern	__setflag
+	extern	_shopGuy1_data
+	extern	__iand
+	extern	_gfx_FillRectangle
+	extern	_playerWalking2_data
+	extern	_gfx_AllocSprite
+	extern	_os_GetCSC
+	extern	_quitButton0_data
+	extern	_watermellon_data
+	extern	__frameset
+	extern	_gfx_SetTextBGColor
+	extern	_enemy3_2_data
+	extern	_kb_Scan
+	extern	_shopGuy2_data
+	extern	_playerWalking3_data
+	extern	_tileset_tiles_data
+	extern	_enemy4_1_data
+	extern	_gfx_FlipSpriteY
+	extern	_gfx_SwapDraw
+	extern	_gfx_SetDraw
+	extern	_quitButton1_data
+	extern	_ti_CloseAll
+	extern	__Unwind_SjLj_Unregister
+	extern	_gfx_SetColor
+	extern	_playButton0_data
+	extern	_gfx_PrintStringXY
+	extern	_playerWalking4_data
+	extern	_gfx_TransparentSprite
+	extern	_explosion1_data
+	extern	_tilemapM
+	extern	_enemy4_2_data
+	extern	_gfx_SetTextScale

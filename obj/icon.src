@@ -1,0 +1,27 @@
+	section .icon
+
+	jp	___prgm_init
+	db	$01
+	public ___icon
+___icon:
+	db	$10, $10
+	db	$FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	db	$F4, $F4, $F4, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $F4, $F4, $F4
+	db	$E0, $E0, $E0, $F6, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $F5, $E0, $E0, $E0
+	db	$E0, $E0, $E0, $F4, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $F3, $E0, $E0, $E0
+	db	$E0, $E0, $E0, $E0, $F4, $FF, $FF, $FF, $FF, $FF, $FF, $F4, $E0, $E0, $E0, $E0
+	db	$EA, $E0, $E0, $E0, $E0, $E8, $F4, $FF, $FF, $F4, $E8, $E0, $E0, $E0, $E0, $EA
+	db	$FF, $EB, $E0, $E0, $E0, $E0, $E0, $E8, $E8, $E0, $E0, $E0, $E0, $E0, $EB, $FF
+	db	$FF, $FF, $FE, $E9, $E0, $E0, $E0, $E0, $E0, $E0, $E0, $E0, $E9, $F6, $FF, $FF
+	db	$FF, $FF, $FF, $FE, $E8, $E0, $E0, $E0, $E0, $E0, $E0, $E9, $FE, $FF, $FF, $FF
+	db	$FF, $FF, $EB, $E0, $E0, $E0, $E0, $E0, $E0, $E0, $E0, $E0, $E0, $F3, $FF, $FF
+	db	$FE, $E9, $E0, $E0, $E0, $E0, $E0, $F3, $F3, $E0, $E0, $E0, $E0, $E0, $E9, $FE
+	db	$E9, $E0, $E0, $E0, $E0, $F3, $FF, $FF, $FF, $FE, $EB, $E0, $E0, $E0, $E0, $E9
+	db	$E0, $E0, $E0, $E9, $FE, $FF, $FF, $FF, $FF, $FF, $FF, $FE, $E9, $E0, $E0, $E0
+	db	$E0, $E0, $E0, $F5, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $F5, $E0, $E0, $E0
+	db	$E0, $E0, $E0, $F5, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $F5, $E0, $E0, $E0
+	db	$FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
+	public ___description
+___description:
+	db	"A fun arena fighting game.", 0
+___prgm_init:
