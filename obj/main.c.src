@@ -188,47 +188,62 @@ _drawHud:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	ld	c, 1
-	ld	b, 0
-	ld	a, c
+	ld	e, 1
+	ld	d, 0
+	ld	a, e
 	jq	z, BB3_2
-	ld	a, b
+	ld	a, d
 BB3_2:
 	ld	hl, (_universal2Animation)
-	ld	de, 1
+	ld	bc, 1
 	or	a, a
-	sbc	hl, de
+	sbc	hl, bc
 	jq	z, BB3_4
-	ld	c, b
+	ld	e, d
 BB3_4:
 	ld	hl, _hudTilemap
-	ld	de, 240
-	or	a, c
+	ld	bc, 240
+	or	a, e
 	bit	0, a
 	jq	nz, BB3_5
-	ld	bc, 1280
+	ld	de, 1280
 	jq	BB3_7
 BB3_5:
-	ld	bc, 320
+	ld	de, 320
 BB3_7:
-	push	de
 	push	bc
+	push	de
 	push	hl
 	call	_gfx_Tilemap
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, (_lifes)
-	ld	de, 101
+	ld	de, (_hudLifes)
+	ld	bc, (_lifes)
+	push	de
+	pop	hl
 	or	a, a
-	sbc	hl, de
+	sbc	hl, bc
 	call	__setflag
-	jq	m, BB3_9
+	jq	m, BB3_8
+	push	bc
+	pop	de
+	jq	BB3_10
+BB3_8:
+	inc	de
+BB3_10:
+	ld	(_hudLifes), de
+	ld	bc, 101
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB3_12
 	ld	hl, 4
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
-	ld	hl, (_lifes)
+	ld	hl, (_hudLifes)
 	ld	de, -100
 	add	hl, de
 	push	hl
@@ -260,13 +275,13 @@ BB3_7:
 	call	_gfx_SetColor
 	ld	bc, 90
 	pop	hl
-	jq	BB3_10
-BB3_9:
+	jq	BB3_13
+BB3_12:
 	ld	hl, 5
 	push	hl
 	call	_gfx_SetColor
 	pop	hl
-	ld	bc, (_lifes)
+	ld	bc, (_hudLifes)
 	push	bc
 	pop	hl
 	push	bc
@@ -279,7 +294,7 @@ BB3_9:
 	ld	e, 63
 	call	__fmul
 	call	__ftol
-BB3_10:
+BB3_13:
 	ld	hl, 11
 	push	hl
 	push	bc
@@ -304,13 +319,13 @@ BB3_10:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB3_12
+	jq	z, BB3_15
 	ld	hl, (_universal2Animation)
 	ld	de, 1
 	or	a, a
 	sbc	hl, de
-	jq	nz, BB3_13
-BB3_12:
+	jq	nz, BB3_16
+BB3_15:
 	ld	hl, 2
 	push	hl
 	push	hl
@@ -331,12 +346,12 @@ BB3_12:
 	call	_gfx_PrintInt
 	pop	hl
 	pop	hl
-BB3_13:
+BB3_16:
 	ld	hl, (_testMode)
 	ld	de, 1
 	or	a, a
 	sbc	hl, de
-	jq	nz, BB3_15
+	jq	nz, BB3_18
 	ld	hl, 2
 	push	hl
 	push	hl
@@ -352,7 +367,7 @@ BB3_13:
 	pop	hl
 	pop	hl
 	pop	hl
-BB3_15:
+BB3_18:
 	ret
 	section	.text,"ax",@progbits
 
@@ -4176,6 +4191,7 @@ BB14_5:
 	ld	(_score), de
 	ld	de, (_data+25)
 	ld	(_lifes), de
+	ld	(_hudLifes), de
 	ld	de, (_data+29)
 	ld	(_firstXBlock), de
 	ld	de, (_data+33)
@@ -4545,6 +4561,7 @@ BB14_37:
 	ld	(_score), bc
 	ld	hl, 200
 	ld	(_lifes), hl
+	ld	(_hudLifes), hl
 	ld	hl, 2
 	ld	(_firstXBlock), hl
 	ld	(_firstYBlock), bc
@@ -6218,7 +6235,7 @@ BB14_171:
 	section	.rodata,"a",@progbits
 	public	_version
 _version:
-	db	"1.1",000o
+	db	"1.2",000o
 
 	section	.rodata,"a",@progbits
 	public	_testModeAvailable
@@ -6379,6 +6396,11 @@ _universal2Animation:
 	public	_hudTilemap
 _hudTilemap:
 	rb	18
+
+	section	.bss,"aw",@nobits
+	public	_hudLifes
+_hudLifes:
+	rb	3
 
 	section	.bss,"aw",@nobits
 	public	_lifes
@@ -7094,6 +7116,6 @@ L_switch.table.nextStage.59:
 	extern	_playerWalking4_data
 	extern	_gfx_TransparentSprite
 	extern	_explosion1_data
-	extern	_tilemapM
 	extern	_enemy4_2_data
 	extern	_gfx_SetTextScale
+	extern	_tilemapM

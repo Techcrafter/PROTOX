@@ -35,7 +35,7 @@ extern unsigned char tilemapM[];
 #define YELLOW			6
 
 //define current version:
-const char version[] = "1.1";
+const char version[] = "1.2";
 
 //variables:
 const int testModeAvailable = 0;
@@ -47,6 +47,7 @@ int selecting;
 int stage;
 int score;
 int lifes;
+int hudLifes;
 
 int firstXBlock;
 int firstYBlock;
@@ -306,17 +307,26 @@ void drawHud()  //draw the HUD
     gfx_Tilemap(&hudTilemap, getXBlock(4), getYBlock(1));  //get HUD interface with shop message from tilemap
   }
   
-  if(lifes > 100)
+  if(hudLifes < lifes)
+  {
+    hudLifes++;
+  }
+  else
+  {
+    hudLifes = lifes;
+  }
+  
+  if(hudLifes > 100)
   {
     gfx_SetColor(GREEN);
-    gfx_FillRectangle(67, 213, (lifes - 100) * 0.9, 11);
+    gfx_FillRectangle(67, 213, (hudLifes - 100) * 0.9, 11);
     gfx_SetColor(RED);
     gfx_FillRectangle(67, 224, 90, 11);
   }
   else
   {
     gfx_SetColor(RED);
-    gfx_FillRectangle(67, 224, lifes * 0.9, 11);
+    gfx_FillRectangle(67, 224, hudLifes * 0.9, 11);
   }
   
   gfx_SetTextFGColor(WHITE);
@@ -1485,6 +1495,7 @@ int main(void)  //main function
   stage = 1;
   score = 0;
   lifes = 200;
+  hudLifes = lifes;
   
   firstXBlock = 2;
   firstYBlock = 0;
@@ -1561,6 +1572,7 @@ int main(void)  //main function
   stage = data.stage;
   score = data.score;
   lifes = data.lifes;
+  hudLifes = lifes;
   firstXBlock = data.firstXBlock;
   firstYBlock = data.firstYBlock;
   scrollX = data.scrollX;
