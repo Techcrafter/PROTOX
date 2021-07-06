@@ -188,57 +188,42 @@ _drawHud:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	ld	e, 1
-	ld	d, 0
-	ld	a, e
+	ld	c, 1
+	ld	b, 0
+	ld	a, c
 	jq	z, BB3_2
-	ld	a, d
+	ld	a, b
 BB3_2:
 	ld	hl, (_universal2Animation)
-	ld	bc, 1
+	ld	de, 1
 	or	a, a
-	sbc	hl, bc
+	sbc	hl, de
 	jq	z, BB3_4
-	ld	e, d
+	ld	c, b
 BB3_4:
 	ld	hl, _hudTilemap
-	ld	bc, 240
-	or	a, e
+	ld	de, 240
+	or	a, c
 	bit	0, a
 	jq	nz, BB3_5
-	ld	de, 1280
+	ld	bc, 1280
 	jq	BB3_7
 BB3_5:
-	ld	de, 320
+	ld	bc, 320
 BB3_7:
-	push	bc
 	push	de
+	push	bc
 	push	hl
 	call	_gfx_Tilemap
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	de, (_hudLifes)
-	ld	bc, (_lifes)
-	push	de
-	pop	hl
+	ld	hl, (_hudLifes)
+	ld	de, 101
 	or	a, a
-	sbc	hl, bc
+	sbc	hl, de
 	call	__setflag
-	jq	m, BB3_8
-	push	bc
-	pop	de
-	jq	BB3_10
-BB3_8:
-	inc	de
-BB3_10:
-	ld	(_hudLifes), de
-	ld	bc, 101
-	ex	de, hl
-	or	a, a
-	sbc	hl, bc
-	call	__setflag
-	jq	m, BB3_12
+	jq	m, BB3_9
 	ld	hl, 4
 	push	hl
 	call	_gfx_SetColor
@@ -275,8 +260,8 @@ BB3_10:
 	call	_gfx_SetColor
 	ld	bc, 90
 	pop	hl
-	jq	BB3_13
-BB3_12:
+	jq	BB3_10
+BB3_9:
 	ld	hl, 5
 	push	hl
 	call	_gfx_SetColor
@@ -294,7 +279,7 @@ BB3_12:
 	ld	e, 63
 	call	__fmul
 	call	__ftol
-BB3_13:
+BB3_10:
 	ld	hl, 11
 	push	hl
 	push	bc
@@ -319,13 +304,13 @@ BB3_13:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB3_15
+	jq	z, BB3_12
 	ld	hl, (_universal2Animation)
 	ld	de, 1
 	or	a, a
 	sbc	hl, de
-	jq	nz, BB3_16
-BB3_15:
+	jq	nz, BB3_13
+BB3_12:
 	ld	hl, 2
 	push	hl
 	push	hl
@@ -346,12 +331,12 @@ BB3_15:
 	call	_gfx_PrintInt
 	pop	hl
 	pop	hl
-BB3_16:
+BB3_13:
 	ld	hl, (_testMode)
 	ld	de, 1
 	or	a, a
 	sbc	hl, de
-	jq	nz, BB3_18
+	jq	nz, BB3_15
 	ld	hl, 2
 	push	hl
 	push	hl
@@ -367,7 +352,7 @@ BB3_16:
 	pop	hl
 	pop	hl
 	pop	hl
-BB3_18:
+BB3_15:
 	ret
 	section	.text,"ax",@progbits
 
@@ -3762,7 +3747,7 @@ _main:
 	pop	hl
 	ld	hl, 232
 	push	hl
-	ld	hl, 296
+	ld	hl, 282
 	push	hl
 	ld	hl, _version
 	push	hl
@@ -4106,7 +4091,7 @@ BB14_2:
 	call	_os_GetCSC
 	ld	(_key), a
 	cp	a, 15
-	jq	z, BB14_171
+	jq	z, BB14_174
 	cp	a, 54
 	jq	nz, BB14_2
 	ld	hl, (_appvarName)
@@ -4475,7 +4460,7 @@ BB14_33:
 	ld	de, 1
 	or	a, a
 	sbc	hl, de
-	jq	z, BB14_171
+	jq	z, BB14_174
 	ld	hl, (_appvarName)
 	ld	de, L_.str.31
 	push	de
@@ -4675,7 +4660,7 @@ BB14_46:
 	or	a, a
 	sbc	hl, de
 	call	__setflag
-	jq	m, BB14_163
+	jq	m, BB14_166
 	ld	hl, (_firstXBlock)
 	ld	bc, 320
 	call	__imulu
@@ -4802,7 +4787,7 @@ BB14_61:
 	call	_os_GetCSC
 	ld	(_key), a
 	cp	a, 15
-	jq	z, BB14_78
+	jq	z, BB14_81
 	ld	de, (_testMode)
 	cp	a, 55
 	ld	bc, 1
@@ -4811,7 +4796,7 @@ BB14_61:
 	pop	hl
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB14_82
+	jq	z, BB14_85
 BB14_64:
 	cp	a, 56
 	jq	nz, BB14_69
@@ -4859,7 +4844,7 @@ BB14_69:
 	ld	bc, 21
 	or	a, a
 	sbc	hl, bc
-	jq	c, BB14_82
+	jq	c, BB14_85
 BB14_73:
 	ld	hl, (_invincibilityActive)
 	or	a, a
@@ -4902,12 +4887,27 @@ BB14_77:
 	call	_movePlayer
 	call	_explosionHandler
 	call	_enemyHandler
+	ld	de, (_hudLifes)
+	ld	bc, (_lifes)
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	call	__setflag
+	jq	m, BB14_79
+	push	bc
+	pop	de
+	jq	BB14_80
+BB14_79:
+	inc	de
+BB14_80:
+	ld	(_hudLifes), de
 	call	_drawHud
 	call	_drawPlayer
 	call	_gfx_SwapDraw
 	call	_stageChecker
 	jq	BB14_46
-BB14_78:
+BB14_81:
 	ld	hl, (_firstXBlock)
 	ld	de, 320
 	push	de
@@ -5007,17 +5007,17 @@ BB14_78:
 	pop	hl
 	pop	hl
 	call	_gfx_SwapDraw
-BB14_79:
+BB14_82:
 	call	_os_GetCSC
 	ld	(_key), a
 	cp	a, 15
 	jq	z, BB14_45
 	cp	a, 54
-	jq	z, BB14_167
+	jq	z, BB14_170
 	cp	a, 56
-	jq	nz, BB14_79
-	jq	BB14_163
-BB14_82:
+	jq	nz, BB14_82
+	jq	BB14_166
+BB14_85:
 	ld	hl, 600
 	ld	(_shopTimer), hl
 	or	a, a
@@ -5030,7 +5030,7 @@ BB14_82:
 	ld	(_selection), hl
 	inc	hl
 	ld	(_selecting), hl
-BB14_83:
+BB14_86:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
@@ -5078,7 +5078,7 @@ BB14_83:
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	p, BB14_86
+	jq	p, BB14_89
 	ld	hl, 1
 	ld	(_shop), hl
 	ld	hl, 58
@@ -5157,18 +5157,18 @@ BB14_83:
 	pop	hl
 	ld	hl, L_.str.38
 	ld	de, L_.str.39
-BB14_92:
+BB14_95:
 	ld	(ix + -3), de
 	ld	de, 98
-	jq	BB14_93
-BB14_86:
+	jq	BB14_96
+BB14_89:
 	push	de
 	pop	hl
 	ld	bc, 0
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	p, BB14_89
+	jq	p, BB14_92
 	ld	hl, 2
 	ld	(_shop), hl
 	ld	hl, 50
@@ -5248,14 +5248,14 @@ BB14_86:
 	pop	hl
 	ld	hl, L_.str.42
 	ld	bc, L_.str.43
-	jq	BB14_88
-BB14_89:
+	jq	BB14_91
+BB14_92:
 	ex	de, hl
 	ld	de, 5000000
 	or	a, a
 	sbc	hl, de
 	call	__setflag
-	jq	p, BB14_91
+	jq	p, BB14_94
 	ld	hl, 3
 	ld	(_shop), hl
 	ld	hl, 58
@@ -5335,9 +5335,9 @@ BB14_89:
 	pop	hl
 	ld	hl, L_.str.40
 	ld	bc, L_.str.41
-BB14_88:
+BB14_91:
 	ld	(ix + -3), bc
-BB14_93:
+BB14_96:
 	ld	bc, 126
 	push	bc
 	push	de
@@ -5376,54 +5376,54 @@ BB14_93:
 	ld	(_key), a
 	ld	de, (_selection)
 	cp	a, 54
-	jq	nz, BB14_96
+	jq	nz, BB14_99
 	push	de
 	pop	hl
 	ld	bc, 3
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_96
+	jq	nz, BB14_99
 	or	a, a
 	sbc	hl, hl
 	ld	(_selecting), hl
 	ld	hl, 160
-	jq	BB14_117
-BB14_96:
+	jq	BB14_120
+BB14_99:
 	cp	a, 4
-	jq	nz, BB14_100
+	jq	nz, BB14_103
 	push	de
 	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB14_100
+	jq	z, BB14_103
 	dec	de
-	jq	BB14_99
-BB14_100:
+	jq	BB14_102
+BB14_103:
 	cp	a, 1
-	jq	nz, BB14_103
+	jq	nz, BB14_106
 	push	de
 	pop	hl
 	ld	bc, 3
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB14_103
+	jq	z, BB14_106
 	inc	de
-BB14_99:
+BB14_102:
 	ld	(_selection), de
-	jq	BB14_115
-BB14_103:
+	jq	BB14_118
+BB14_106:
 	cp	a, 54
-	jq	nz, BB14_115
+	jq	nz, BB14_118
 	push	de
 	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_108
+	jq	nz, BB14_111
 	ld	iy, (_shop)
-	jq	BB14_106
-BB14_91:
+	jq	BB14_109
+BB14_94:
 	ld	hl, 1
 	ld	(_shop), hl
 	ld	hl, 58
@@ -5502,32 +5502,32 @@ BB14_91:
 	pop	hl
 	ld	hl, L_.str.48
 	ld	de, L_.str.49
-	jq	BB14_92
-BB14_108:
+	jq	BB14_95
+BB14_111:
 	push	de
 	pop	hl
 	ld	bc, 1
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_110
+	jq	nz, BB14_113
 	ld	iy, (_shop+3)
-	jq	BB14_106
-BB14_110:
+	jq	BB14_109
+BB14_113:
 	push	de
 	pop	hl
 	ld	bc, 2
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_112
+	jq	nz, BB14_115
 	ld	iy, (_shop+6)
-BB14_106:
+BB14_109:
 	ld	(_i), iy
-BB14_113:
+BB14_116:
 	lea	hl, iy + 0
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB14_115
+	jq	z, BB14_118
 	ld	hl, (_score)
 	ld	(ix + -3), hl
 	ld	hl, (_lifes)
@@ -5536,19 +5536,19 @@ BB14_113:
 	ld	bc, 1
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_128
+	jq	nz, BB14_131
 	ld	hl, (ix + -3)
 	ld	bc, 2000
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_128
+	jq	m, BB14_131
 	ld	hl, (ix + -6)
 	ld	bc, 200
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	p, BB14_128
+	jq	p, BB14_131
 	ld	bc, -2000
 	ld	hl, (ix + -3)
 	add	hl, bc
@@ -5559,29 +5559,29 @@ BB14_113:
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_124
+	jq	m, BB14_127
 	ld	iy, 175
-BB14_124:
+BB14_127:
 	ld	bc, 25
-	jq	BB14_125
-BB14_128:
+	jq	BB14_128
+BB14_131:
 	lea	hl, iy + 0
 	ld	bc, 2
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_134
+	jq	nz, BB14_137
 	ld	hl, (ix + -3)
 	ld	bc, 4500
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_134
+	jq	m, BB14_137
 	ld	hl, (ix + -6)
 	ld	bc, 200
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	p, BB14_134
+	jq	p, BB14_137
 	ld	bc, -4500
 	ld	hl, (ix + -3)
 	add	hl, bc
@@ -5592,29 +5592,29 @@ BB14_128:
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_133
+	jq	m, BB14_136
 	ld	iy, 150
-BB14_133:
+BB14_136:
 	ld	bc, 50
-	jq	BB14_125
-BB14_134:
+	jq	BB14_128
+BB14_137:
 	lea	hl, iy + 0
 	ld	bc, 3
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_140
+	jq	nz, BB14_143
 	ld	hl, (ix + -3)
 	ld	bc, 5000
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_140
+	jq	m, BB14_143
 	ld	hl, (ix + -6)
 	ld	bc, 200
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	p, BB14_140
+	jq	p, BB14_143
 	ld	bc, -5000
 	ld	hl, (ix + -3)
 	add	hl, bc
@@ -5625,29 +5625,29 @@ BB14_134:
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_139
+	jq	m, BB14_142
 	ld	iy, 125
-BB14_139:
+BB14_142:
 	ld	bc, 75
-	jq	BB14_125
-BB14_140:
+	jq	BB14_128
+BB14_143:
 	lea	hl, iy + 0
 	ld	bc, 4
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_146
+	jq	nz, BB14_149
 	ld	hl, (ix + -3)
 	ld	bc, 9250
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_146
+	jq	m, BB14_149
 	ld	hl, (ix + -6)
 	ld	bc, 200
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	p, BB14_146
+	jq	p, BB14_149
 	ld	bc, -9250
 	ld	hl, (ix + -3)
 	add	hl, bc
@@ -5658,58 +5658,58 @@ BB14_140:
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_145
+	jq	m, BB14_148
 	ld	iy, 50
-BB14_145:
+BB14_148:
 	ld	bc, 150
-BB14_125:
+BB14_128:
 	add	iy, bc
 	ld	(_lifes), iy
-	jq	BB14_126
-BB14_146:
+	jq	BB14_129
+BB14_149:
 	lea	hl, iy + 0
 	ld	bc, 5
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_149
+	jq	nz, BB14_152
 	ld	hl, (ix + -3)
 	ld	bc, 3000
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_149
+	jq	m, BB14_152
 	ld	bc, -3000
 	ld	hl, (ix + -3)
 	add	hl, bc
 	ld	(_score), hl
 	ld	hl, 150
 	ld	(_timeStopActive), hl
-	jq	BB14_126
-BB14_149:
+	jq	BB14_129
+BB14_152:
 	lea	hl, iy + 0
 	ld	bc, 6
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_152
+	jq	nz, BB14_155
 	ld	hl, (ix + -3)
 	ld	bc, 4250
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_152
+	jq	m, BB14_155
 	ld	bc, -4250
 	ld	hl, (ix + -3)
 	add	hl, bc
 	ld	(_score), hl
 	ld	hl, 250
 	ld	(_invincibilityActive), hl
-	jq	BB14_126
-BB14_152:
+	jq	BB14_129
+BB14_155:
 	lea	hl, iy + 0
 	ld	bc, 7
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_156
+	jq	nz, BB14_159
 	ld	hl, (_dashBootsActive)
 	ld	(ix + -6), hl
 	ld	hl, (ix + -3)
@@ -5717,12 +5717,12 @@ BB14_152:
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_156
+	jq	m, BB14_159
 	ld	hl, (ix + -6)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_156
+	jq	nz, BB14_159
 	ld	bc, -20000
 	ld	hl, (ix + -3)
 	add	hl, bc
@@ -5730,49 +5730,49 @@ BB14_152:
 	ld	hl, 1
 	ld	(_dashBootsActive), hl
 	dec	hl
-	jq	BB14_127
-BB14_156:
+	jq	BB14_130
+BB14_159:
 	lea	hl, iy + 0
 	ld	bc, 8
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_115
+	jq	nz, BB14_118
 	ld	iy, (_sword)
 	ld	hl, (ix + -3)
 	ld	bc, 16500
 	or	a, a
 	sbc	hl, bc
 	call	__setflag
-	jq	m, BB14_115
+	jq	m, BB14_118
 	lea	hl, iy + 0
 	ld	bc, 1
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB14_115
+	jq	nz, BB14_118
 	ld	bc, -16500
 	ld	hl, (ix + -3)
 	add	hl, bc
 	ld	(_score), hl
 	ld	hl, 2
 	ld	(_sword), hl
-BB14_126:
+BB14_129:
 	or	a, a
 	sbc	hl, hl
-BB14_127:
+BB14_130:
 	ld	(_selecting), hl
-BB14_115:
+BB14_118:
 	push	de
 	pop	hl
 	ld	bc, 4
 	or	a, a
 	sbc	hl, bc
-	jq	nc, BB14_118
+	jq	nc, BB14_121
 	ex	de, hl
 	ld	c, 5
 	call	__ishl
 	ld	de, 64
 	add	hl, de
-BB14_117:
+BB14_120:
 	push	hl
 	ld	hl, 42
 	push	hl
@@ -5782,14 +5782,14 @@ BB14_117:
 	pop	hl
 	pop	hl
 	pop	hl
-BB14_118:
+BB14_121:
 	call	_gfx_SwapDraw
 	ld	hl, (_selecting)
-	jq	BB14_83
-BB14_112:
+	jq	BB14_86
+BB14_115:
 	ld	iy, (_i)
-	jq	BB14_113
-BB14_163:
+	jq	BB14_116
+BB14_166:
 	ld	hl, (_appvarName)
 	ld	de, L_.str.31
 	push	de
@@ -5894,7 +5894,7 @@ BB14_163:
 	ld	de, 1
 	or	a, a
 	sbc	hl, de
-	jq	nz, BB14_165
+	jq	nz, BB14_168
 	ld	hl, 2
 	push	hl
 	call	_gfx_SetTextFGColor
@@ -5918,14 +5918,14 @@ BB14_163:
 	pop	hl
 	pop	hl
 	pop	hl
-BB14_165:
+BB14_168:
 	call	_gfx_SwapDraw
-BB14_166:
+BB14_169:
 	call	_os_GetCSC
 	cp	a, 54
-	jq	nz, BB14_166
+	jq	nz, BB14_169
 	jq	BB14_13
-BB14_167:
+BB14_170:
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -6168,12 +6168,12 @@ BB14_167:
 	ld	a, (_enemySpawnTime)
 	ld	(_data+102), a
 	ld	iy, 0
-BB14_168:
+BB14_171:
 	lea	hl, iy + 0
 	ld	de, 90
 	or	a, a
 	sbc	hl, de
-	jq	z, BB14_170
+	jq	z, BB14_173
 	lea	de, iy + 0
 	ld	hl, _enemy
 	add	hl, de
@@ -6206,8 +6206,8 @@ BB14_168:
 	push	bc
 	pop	iy
 	add	iy, de
-	jq	BB14_168
-BB14_170:
+	jq	BB14_171
+BB14_173:
 	ld	hl, 30
 	ld	(_i), hl
 	ld	hl, (ix + -6)
@@ -6223,7 +6223,7 @@ BB14_170:
 	pop	hl
 	pop	hl
 	pop	hl
-BB14_171:
+BB14_174:
 	call	_gfx_End
 	or	a, a
 	sbc	hl, hl
@@ -6235,7 +6235,7 @@ BB14_171:
 	section	.rodata,"a",@progbits
 	public	_version
 _version:
-	db	"1.2",000o
+	db	"1.2.1",000o
 
 	section	.rodata,"a",@progbits
 	public	_testModeAvailable
@@ -6403,11 +6403,6 @@ _hudLifes:
 	rb	3
 
 	section	.bss,"aw",@nobits
-	public	_lifes
-_lifes:
-	rb	3
-
-	section	.bss,"aw",@nobits
 	public	_score
 _score:
 	rb	3
@@ -6510,6 +6505,11 @@ L_.str.5:
 	section	.bss,"aw",@nobits
 	public	_stage
 _stage:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_lifes
+_lifes:
 	rb	3
 
 	section	.bss,"aw",@nobits

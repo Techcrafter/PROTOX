@@ -35,7 +35,7 @@ extern unsigned char tilemapM[];
 #define YELLOW			6
 
 //define current version:
-const char version[] = "1.2";
+const char version[] = "1.2.1";
 
 //variables:
 const int testModeAvailable = 0;
@@ -305,15 +305,6 @@ void drawHud()  //draw the HUD
   else
   {
     gfx_Tilemap(&hudTilemap, getXBlock(4), getYBlock(1));  //get HUD interface with shop message from tilemap
-  }
-  
-  if(hudLifes < lifes)
-  {
-    hudLifes++;
-  }
-  else
-  {
-    hudLifes = lifes;
   }
   
   if(hudLifes > 100)
@@ -1335,7 +1326,7 @@ int main(void)  //main function
 	
 	gfx_Tilemap(&tilemap, getXBlock(0), getYBlock(0));
   gfx_TransparentSprite(techcrafter, 100, 60);
-	gfx_PrintStringXY(version, 296, 232);
+	gfx_PrintStringXY(version, 282, 232);
 	gfx_SwapDraw();
 	
 	srand(rtc_Time());
@@ -1706,6 +1697,14 @@ int main(void)  //main function
     explosionHandler();
     enemyHandler();
     
+    if(hudLifes < lifes)
+    {
+      hudLifes++;
+    }
+    else
+    {
+      hudLifes = lifes;
+    }
     drawHud();
     drawPlayer();
     
